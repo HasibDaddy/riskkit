@@ -1,0 +1,33 @@
+site_name: riskkit
+site_description: A framework-agnostic risk-management toolkit for systematic traders.
+repo_url: https://github.com/USERNAME/riskkit
+repo_name: USERNAME/riskkit
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: teal
+      toggle:
+        icon: material/weather-night
+        name: Dark mode
+    - scheme: slate
+      primary: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Light mode
+  features:
+    - navigation.sections
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Components: components.md
+  - Integrations: integrations.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - tables

@@ -3,6 +3,13 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- Runnable integration examples for backtesting.py and freqtrade.
+- mkdocs documentation site (Home / Quickstart / Components / Integrations).
+- PyPI trusted-publishing release workflow and `PUBLISHING.md` guide.
+
 ## [0.2.0] - 2026-06-19
 
 ### Added

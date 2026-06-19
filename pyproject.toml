@@ -38,6 +38,7 @@ dependencies = []
 [project.optional-dependencies]
 pandas = ["pandas>=1.0"]
 dev = ["pytest>=7.0", "pandas>=1.0"]
+docs = ["mkdocs-material>=9.0"]
 
 [project.urls]
 Homepage = "https://github.com/USERNAME/riskkit"
