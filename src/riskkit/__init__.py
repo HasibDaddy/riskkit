@@ -1,9 +1,19 @@
 """riskkit — a framework-agnostic risk-management toolkit for systematic traders.
 
 riskkit is the layer most backtesters and trading bots leave thin: how big a
-position to take, when to cut size, and when to stop trading altogether. The
-components are pure Python with no dependency on any exchange, data provider, or
-backtesting framework — feed them numbers, get back decisions.
+position to take, where stops live, when to cut size, what not to stack, and
+when to stop trading altogether. Every component is plain Python that knows
+nothing about any exchange, data provider, or backtesting framework — you feed
+it numbers and it hands back auditable decisions.
+
+Components
+----------
+- :class:`PositionSizer`     — volatility-adjusted sizing with a Kelly ceiling
+- :class:`DrawdownManager`   — drawdown-tiered size reduction + halt
+- :class:`StopEngine`        — composable stop stack (initial/BE/trail/time/vol)
+- :class:`CorrelationGuard`  — one open position per correlation group
+- :class:`SessionManager`    — daily limits, cooldowns, tilt detection
+- :class:`PreTradeValidator` — the composable final gate before an order
 
 Quick start::
 
@@ -18,16 +28,38 @@ Quick start::
 """
 from __future__ import annotations
 
+from .correlation import CorrelationDecision, CorrelationGuard
 from .drawdown import DrawdownManager, DrawdownState
+from .session import SessionDecision, SessionManager, TradeRecord
 from .sizing import PositionSizer, SizingInputs, SizingResult
+from .stops import Side, StopEngine, StopStack
+from .validator import CheckResult, PreTradeValidator, TradeProposal, ValidationResult
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
+    # sizing
     "PositionSizer",
     "SizingInputs",
     "SizingResult",
+    # drawdown
     "DrawdownManager",
     "DrawdownState",
+    # stops
+    "StopEngine",
+    "StopStack",
+    "Side",
+    # correlation
+    "CorrelationGuard",
+    "CorrelationDecision",
+    # session
+    "SessionManager",
+    "SessionDecision",
+    "TradeRecord",
+    # validator
+    "PreTradeValidator",
+    "TradeProposal",
+    "ValidationResult",
+    "CheckResult",
     "__version__",
 ]

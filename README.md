@@ -31,16 +31,20 @@ Zero runtime dependencies. Python 3.9+.
 
 ---
 
-## What's in the box (v0.1)
+## What's in the box
 
 | Component | What it does |
 |---|---|
 | `PositionSizer` | Volatility-adjusted fixed-fractional sizing with an optional half-Kelly ceiling, a reduction ladder for losing streaks / drawdowns, and a hard notional cap. |
 | `DrawdownManager` | Tracks high-water-mark drawdown, maps it onto a tier ladder (cut size → raise the bar → halt), with a recovery ramp and a rolling weekly-loss pause. |
+| `StopEngine` | A composable stop *stack* per position — initial, break-even, ATR trailing, EMA trailing, time, and volatility stops. The tightest one wins; stops only ever move closer. |
+| `CorrelationGuard` | At most one open position per correlation group. Groups can be static (you define them) or computed dynamically from a rolling return-correlation matrix. |
+| `SessionManager` | Daily trade/loss caps, profit-taking stops, minimum spacing, escalating cooldowns after losing streaks, and tilt detection. |
+| `PreTradeValidator` | The composable final gate: runs every rule against a proposed trade and vetoes it if any fails — returning exactly which checks passed and failed. |
 
-Every decision is **auditable** — the sizer returns exactly which multipliers
-fired and why; the drawdown manager returns the tier, the reason, and the
-overrides it's imposing.
+Every decision is **auditable** — the sizer returns which multipliers fired,
+the stop engine logs each adjustment, and the validator returns a pass/fail line
+for every single check.
 
 ---
 
@@ -108,15 +112,18 @@ The two compose naturally: feed `DrawdownManager`'s `drawdown_pct` and
 
 ## Roadmap
 
-`riskkit` is extracted from a working risk-first trading bot. The next modules to
-land, in order:
+`riskkit` is extracted and generalized from a working risk-first trading bot.
+The core six components are in place; next up is making them effortless to drop
+into the popular frameworks:
 
-- [ ] `StopEngine` — composable stop stack (initial, break-even, trailing, time, volatility)
-- [ ] `CorrelationGuard` — cap concurrent exposure across correlated instruments
-- [ ] `SessionManager` — daily loss limits, cooldowns, and tilt detection
-- [ ] `PreTradeValidator` — a composable checklist that vetoes a trade if any rule fails
+- [x] `PositionSizer`, `DrawdownManager`, `StopEngine`
+- [x] `CorrelationGuard`, `SessionManager`, `PreTradeValidator`
+- [ ] First-class adapters / examples for backtesting.py, vectorbt, and freqtrade
+- [ ] A hosted docs site with end-to-end recipes
+- [ ] A single `RiskManager` façade that wires all six together with one config
 
-Feedback on the API before more lands is genuinely welcome — open an issue.
+Feedback on the API is genuinely welcome — open an issue. See
+[CONTRIBUTING.md](CONTRIBUTING.md) and the [examples](examples/).
 
 ---
 
