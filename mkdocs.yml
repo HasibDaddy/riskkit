@@ -1,7 +1,7 @@
 site_name: riskkit
 site_description: A framework-agnostic risk-management toolkit for systematic traders.
-repo_url: https://github.com/USERNAME/riskkit
-repo_name: USERNAME/riskkit
+repo_url: https://github.com/HasibDaddy/riskkit
+repo_name: HasibDaddy/riskkit
 
 theme:
   name: material

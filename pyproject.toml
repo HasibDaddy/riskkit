@@ -41,9 +41,9 @@ dev = ["pytest>=7.0", "pandas>=1.0"]
 docs = ["mkdocs-material>=9.0"]
 
 [project.urls]
-Homepage = "https://github.com/USERNAME/riskkit"
-Repository = "https://github.com/USERNAME/riskkit"
-Issues = "https://github.com/USERNAME/riskkit/issues"
+Homepage = "https://github.com/HasibDaddy/riskkit"
+Repository = "https://github.com/HasibDaddy/riskkit"
+Issues = "https://github.com/HasibDaddy/riskkit/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/riskkit"]

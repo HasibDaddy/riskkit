@@ -3,7 +3,7 @@ name: Publish to PyPI
 # Publishes when you push a version tag like v0.2.0.
 # Uses PyPI Trusted Publishing (OIDC) — no API token stored in the repo.
 # One-time setup: on pypi.org add a "pending publisher" for project `riskkit`,
-# owner `USERNAME`, repo `riskkit`, workflow `release.yml`, environment `pypi`.
+# owner `HasibDaddy`, repo `riskkit`, workflow `release.yml`, environment `pypi`.
 
 on:
   push:

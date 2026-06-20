@@ -40,5 +40,5 @@ else:
 
 ## Wiring it all together
 
-See [`examples/pipeline.py`](https://github.com/USERNAME/riskkit/blob/main/examples/pipeline.py)
+See [`examples/pipeline.py`](https://github.com/HasibDaddy/riskkit/blob/main/examples/pipeline.py)
 for the full flow: drawdown posture → sizing → final-gate validation.

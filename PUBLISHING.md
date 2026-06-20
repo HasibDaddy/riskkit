@@ -35,8 +35,8 @@ python -m twine upload dist/*    # paste a PyPI API token when prompted
 
 ## Before the first publish — checklist
 
-- [ ] Replace every `USERNAME` placeholder with your real GitHub handle
-      (`pyproject.toml`, `README.md`, `mkdocs.yml`, `docs/`).
+- [x] GitHub handle (`HasibDaddy`) filled in across `pyproject.toml`,
+      `mkdocs.yml`, `docs/`, and the workflow.
 - [ ] Confirm `version` in `pyproject.toml` and `src/riskkit/__init__.py` match.
 - [ ] `pytest` is green and CI passes on GitHub.
 - [ ] `python -m build` succeeds locally and `twine check dist/*` passes.
