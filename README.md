@@ -139,8 +139,9 @@ into the popular frameworks:
 - [ ] A hosted docs site with end-to-end recipes
 - [ ] A single `RiskManager` façade that wires all six together with one config
 
-Feedback on the API is genuinely welcome — open an issue. See
-[CONTRIBUTING.md](CONTRIBUTING.md) and the [examples](examples/).
+Feedback on the API is genuinely welcome — open an issue. See the full
+[ROADMAP.md](ROADMAP.md), [CONTRIBUTING.md](CONTRIBUTING.md), and the
+[examples](examples/).
 
 ---
 
