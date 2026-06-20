@@ -143,6 +143,18 @@ def test_validator_limits_track_session_config():
     assert rm2.validator.max_daily_trades == 3
 
 
+def test_total_exposure_cap_tracks_notional_cap():
+    # A single full-size position must fit inside the total-exposure cap, so the
+    # cap rises with max_notional_pct above the 10% multi-position baseline.
+    assert RiskManager(RiskConfig(max_notional_pct=15.0)).validator.max_total_exposure_pct == 15.0
+    assert RiskManager(RiskConfig(max_notional_pct=4.0)).validator.max_total_exposure_pct == 10.0
+    # An explicit override still wins.
+    rm = RiskManager(RiskConfig(
+        max_notional_pct=15.0, validator=dict(max_total_exposure_pct=30.0),
+    ))
+    assert rm.validator.max_total_exposure_pct == 30.0
+
+
 def test_losing_streak_reduces_size():
     rm = RiskManager()
     rm.on_equity(10_000, now=T0)

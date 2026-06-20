@@ -49,6 +49,10 @@ from .sizing import PositionSizer, SizingInputs, SizingResult
 from .stops import StopEngine
 from .validator import PreTradeValidator, TradeProposal, ValidationResult
 
+# Mirrors PreTradeValidator's own default; also the façade's multi-position
+# baseline for the total-exposure cap.
+_DEFAULT_TOTAL_EXPOSURE_PCT = 10.0
+
 
 @dataclass
 class RiskConfig:
@@ -217,6 +221,12 @@ class RiskManager:
         # threshold. Anything in ``config.validator`` still wins if set.
         validator_kwargs = {
             "max_notional_pct": self.config.max_notional_pct,
+            # A single full-size position must fit inside the total-exposure cap,
+            # so the cap tracks max_notional_pct when that is raised above the
+            # multi-position baseline. An explicit validator override still wins.
+            "max_total_exposure_pct": max(
+                _DEFAULT_TOTAL_EXPOSURE_PCT, self.config.max_notional_pct
+            ),
             "max_daily_trades": self.session.max_trades,
             "max_daily_loss_pct": self.session.max_loss_pct,
             "min_seconds_between_trades": self.session.min_minutes_between * 60,
