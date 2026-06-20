@@ -1,6 +1,27 @@
 # Components
 
-Every component is independent — use one or all six.
+Every component is independent — use one or all six. When you want all of them
+working together, reach for the `RiskManager` façade rather than wiring them up
+yourself.
+
+## RiskManager
+
+The façade over the other six. Build it from a single `RiskConfig` (which carries
+two promoted knobs — `base_risk_pct`, `max_notional_pct` — plus a pass-through
+dict of keyword arguments for each component), then:
+
+- `on_equity(equity)` — refresh drawdown and session state as the account moves.
+- `evaluate(TradeIntent(...))` — size **and** validate one trade, returning a
+  `RiskDecision` (`ok`, `units`, `stop`, `risk_pct`, and `reasons` listing every
+  gate that vetoed it, plus the full component results for auditing).
+- `on_fill(decision)` / `on_close(trade)` — keep the open book and the session's
+  streak/cooldown state current.
+
+`decision.ok` is the AND of the pre-trade validator passing *and* the session
+manager permitting an entry — the latter catches behavioural blocks (tilt,
+cooldowns, profit target hit) that have no dedicated validator flag. The
+underlying components are exposed as attributes (`.sizer`, `.drawdown`, `.stops`,
+`.correlation`, `.session`, `.validator`) when you need to reach past the façade.
 
 ## PositionSizer
 

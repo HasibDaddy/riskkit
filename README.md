@@ -51,6 +51,39 @@ for every single check.
 
 ## Quick start
 
+### The whole stack, one call
+
+`RiskManager` is the façade: wire all six components from a single config, push
+equity in as your account moves, and ask one question per trade. It keeps the
+drawdown, session, and open-position state in sync for you.
+
+```python
+from riskkit import RiskManager, RiskConfig, TradeIntent
+
+risk = RiskManager(RiskConfig(
+    base_risk_pct=1.0, max_notional_pct=4.0,
+    drawdown=dict(tier1_pct=3, halt_pct=10),
+    session=dict(max_trades_per_day=5),
+    correlation=dict(static_groups={"majors": {"BTC/USDT", "ETH/USDT"}}),
+))
+
+risk.on_equity(10_000)                              # refresh drawdown/session state
+decision = risk.evaluate(TradeIntent(
+    symbol="BTC/USDT", side="long",
+    entry_price=100.0, stop_price=98.0, target_price=104.0,
+    score=82, atr=2.0, atr_baseline=2.0,
+))
+
+if decision.ok:
+    place(decision.units, decision.stop)           # your execution layer
+    risk.on_fill(decision)                          # tell riskkit it filled
+else:
+    print("skip:", *decision.reasons, sep="\n  ")   # every gate that vetoed it
+```
+
+Reach past the façade to any single component when you need to — they're all
+exposed (`risk.sizer`, `risk.drawdown`, `risk.stops`, …) and usable standalone.
+
 ### Sizing a trade
 
 ```python
@@ -122,8 +155,9 @@ runnable:
   signals, the risk model is unchanged.
 - **freqtrade** — [`examples/freqtrade_callbacks.py`](examples/freqtrade_callbacks.py)
   drives `custom_stake_amount` from your risk model instead of a flat stake.
-- **your own loop** — [`examples/pipeline.py`](examples/pipeline.py) wires
-  drawdown → sizing → validation into one `decide_trade()` call.
+- **your own loop** — [`examples/risk_manager.py`](examples/risk_manager.py)
+  drives the full `RiskManager` façade end-to-end;
+  [`examples/pipeline.py`](examples/pipeline.py) shows the same flow wired by hand.
 
 Full docs (mkdocs): clone the repo, then `pip install -e ".[docs]" && mkdocs serve`.
 
@@ -135,9 +169,9 @@ into the popular frameworks:
 
 - [x] `PositionSizer`, `DrawdownManager`, `StopEngine`
 - [x] `CorrelationGuard`, `SessionManager`, `PreTradeValidator`
+- [x] A single `RiskManager` façade that wires all six together with one config
 - [ ] First-class adapters / examples for backtesting.py, vectorbt, and freqtrade
 - [ ] A hosted docs site with end-to-end recipes
-- [ ] A single `RiskManager` façade that wires all six together with one config
 
 Feedback on the API is genuinely welcome — open an issue. See the full
 [ROADMAP.md](ROADMAP.md), [CONTRIBUTING.md](CONTRIBUTING.md), and the

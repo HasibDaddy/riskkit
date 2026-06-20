@@ -39,4 +39,6 @@ pip install "riskkit[pandas] @ git+https://github.com/HasibDaddy/riskkit.git"
 | `SessionManager` | Daily caps, cooldowns, and tilt detection. |
 | `PreTradeValidator` | The composable final gate that vetoes a trade if any rule fails. |
 
-Head to [Quickstart](quickstart.md) next.
+Want all six working together? The **`RiskManager`** façade wires them from one
+config and turns a single `TradeIntent` into a sized, validated decision — see
+[Quickstart](quickstart.md).

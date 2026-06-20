@@ -30,6 +30,7 @@ from __future__ import annotations
 
 from .correlation import CorrelationDecision, CorrelationGuard
 from .drawdown import DrawdownManager, DrawdownState
+from .manager import OpenPosition, RiskConfig, RiskDecision, RiskManager, TradeIntent
 from .session import SessionDecision, SessionManager, TradeRecord
 from .sizing import PositionSizer, SizingInputs, SizingResult
 from .stops import Side, StopEngine, StopStack
@@ -38,6 +39,12 @@ from .validator import CheckResult, PreTradeValidator, TradeProposal, Validation
 __version__ = "0.2.0"
 
 __all__ = [
+    # façade
+    "RiskManager",
+    "RiskConfig",
+    "TradeIntent",
+    "RiskDecision",
+    "OpenPosition",
     # sizing
     "PositionSizer",
     "SizingInputs",

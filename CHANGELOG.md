@@ -6,9 +6,18 @@ All notable changes to this project are documented here. This project adheres to
 ## [Unreleased]
 
 ### Added
+- `RiskManager` façade — wires all six components from a single `RiskConfig` and
+  turns one `TradeIntent` into a sized, validated `RiskDecision` in a single
+  `evaluate()` call. Tracks drawdown, session, and open-book state for you via
+  `on_equity()` / `on_fill()` / `on_close()`. See `examples/risk_manager.py`.
 - Runnable integration examples for backtesting.py and freqtrade.
 - mkdocs documentation site (Home / Quickstart / Components / Integrations).
 - PyPI trusted-publishing release workflow and `PUBLISHING.md` guide.
+
+### Fixed
+- `PositionSizer` now reports `risk_pct` consistent with `risk_amount` when the
+  notional cap binds (previously `risk_pct` kept the pre-cap target while
+  `risk_amount` reflected the smaller, capped position).
 
 ## [0.2.0] - 2026-06-19
 

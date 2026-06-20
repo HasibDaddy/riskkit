@@ -11,10 +11,10 @@ here the focus is making them effortless to adopt and deeper where it counts.
 
 ## v0.3 — Adoption & ergonomics
 
-- **`RiskManager` façade** — wire all six components from a single config and make
-  one call to size + validate a trade. Intended API:
+- **`RiskManager` façade** ✅ *shipped* — wires all six components from a single
+  config; one `evaluate()` call sizes + validates a trade:
   ```python
-  from riskkit import RiskManager, RiskConfig, TradeProposal
+  from riskkit import RiskManager, RiskConfig, TradeIntent
 
   risk = RiskManager(RiskConfig(
       base_risk_pct=1.0, max_notional_pct=4.0,
@@ -22,7 +22,7 @@ here the focus is making them effortless to adopt and deeper where it counts.
       session=dict(max_trades_per_day=5),
   ))
   risk.on_equity(equity)                       # refresh drawdown/session state
-  decision = risk.evaluate(TradeProposal(...)) # size + validate in one call
+  decision = risk.evaluate(TradeIntent(...))   # size + validate in one call
   if decision.ok:
       place(decision.units, decision.stop)
   ```
