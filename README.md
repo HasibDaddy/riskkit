@@ -24,10 +24,11 @@ audit. Drop them into [backtesting.py](https://github.com/kernc/backtesting.py),
 ## Install
 
 ```bash
-pip install riskkit
+pip install "git+https://github.com/HasibDaddy/riskkit.git"
 ```
 
-Zero runtime dependencies. Python 3.9+.
+Zero runtime dependencies. Python 3.9+. *(A PyPI release is on the way — until
+then, install straight from GitHub with the line above.)*
 
 ---
 
@@ -124,7 +125,7 @@ runnable:
 - **your own loop** — [`examples/pipeline.py`](examples/pipeline.py) wires
   drawdown → sizing → validation into one `decide_trade()` call.
 
-Full docs (mkdocs): `pip install riskkit[docs] && mkdocs serve`.
+Full docs (mkdocs): clone the repo, then `pip install -e ".[docs]" && mkdocs serve`.
 
 ## Roadmap
 

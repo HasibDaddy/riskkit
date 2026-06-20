@@ -27,7 +27,7 @@ it returns an exit reason or `None`.
 
 Allows at most one open position per correlation group. Groups can be static
 (you define them) or computed dynamically from a rolling return-correlation
-matrix (`pip install riskkit[pandas]`).
+matrix (install the `pandas` extra).
 
 ## SessionManager
 

@@ -22,8 +22,10 @@ it numbers; it hands back auditable decisions you can drop into
 ## Install
 
 ```bash
-pip install riskkit          # core, zero dependencies
-pip install riskkit[pandas]  # adds dynamic correlation
+# Until the PyPI release lands, install from GitHub:
+pip install "git+https://github.com/HasibDaddy/riskkit.git"
+# with dynamic correlation (adds pandas):
+pip install "riskkit[pandas] @ git+https://github.com/HasibDaddy/riskkit.git"
 ```
 
 ## The six components
