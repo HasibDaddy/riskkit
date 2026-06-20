@@ -67,6 +67,9 @@ def test_notional_cap_binds_when_stop_is_tight():
     r = sizer.size(base_inputs(stop_price=99.0, confluence_score=80))
     assert "notional_cap" in r.multipliers_applied
     assert r.notional == pytest.approx(400.0)  # exactly 4% of 10k equity
+    # When the cap binds, risk_pct reflects realized risk, not the 1% target.
+    assert r.risk_pct == pytest.approx(r.risk_amount / 10_000)
+    assert r.risk_pct < 0.01
 
 
 def test_higher_volatility_reduces_size():

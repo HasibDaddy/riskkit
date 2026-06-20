@@ -175,6 +175,9 @@ class PositionSizer:
         if units > max_units_by_notional:
             applied["notional_cap"] = max_units_by_notional / units
             units = max_units_by_notional
+            # The cap bound the size, so realized risk is now below target —
+            # keep risk_pct consistent with risk_amount (risk_amount / equity).
+            risk_pct = (units * risk_per_unit) / inputs.equity
 
         return SizingResult(
             units=units,
