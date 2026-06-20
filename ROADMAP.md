@@ -27,7 +27,8 @@ here the focus is making them effortless to adopt and deeper where it counts.
       place(decision.units, decision.stop)
   ```
 - **First-class framework adapters:**
-  - backtesting.py — a `RiskkitStrategy` mixin that auto-sizes and validates entries.
+  - backtesting.py ✅ *shipped* — the `RiskkitStrategy` mixin auto-sizes and
+    validates entries via `RiskManager` (`riskkit.adapters.backtesting`).
   - freqtrade — a ready strategy mixin / documented callbacks.
   - vectorbt — helpers to apply sizing & drawdown control to vectorized signals.
 - **Config presets** (conservative / balanced / aggressive); load from YAML or dict.

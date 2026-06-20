@@ -10,6 +10,10 @@ All notable changes to this project are documented here. This project adheres to
   turns one `TradeIntent` into a sized, validated `RiskDecision` in a single
   `evaluate()` call. Tracks drawdown, session, and open-book state for you via
   `on_equity()` / `on_fill()` / `on_close()`. See `examples/risk_manager.py`.
+- backtesting.py adapter — `riskkit.adapters.backtesting.RiskkitStrategy`, a
+  `Strategy` mixin whose `risk_long()` / `risk_short()` size and validate every
+  entry through a `RiskManager` and feed closed trades back to the session. New
+  `backtesting` optional extra; see `examples/backtesting_riskmanager.py`.
 - Runnable integration examples for backtesting.py and freqtrade.
 - mkdocs documentation site (Home / Quickstart / Components / Integrations).
 - PyPI trusted-publishing release workflow and `PUBLISHING.md` guide.

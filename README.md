@@ -149,10 +149,13 @@ The two compose naturally: feed `DrawdownManager`'s `drawdown_pct` and
 riskkit slots into whatever you already use — the [examples](examples/) are
 runnable:
 
-- **backtesting.py** — [`examples/backtesting_py_strategy.py`](examples/backtesting_py_strategy.py)
-  sizes every entry with `PositionSizer`. On the bundled GOOG dataset that risk
-  layer keeps max drawdown to ~5% while staying net positive — swap in your own
-  signals, the risk model is unchanged.
+- **backtesting.py** — subclass the `RiskkitStrategy` adapter
+  (`from riskkit.adapters.backtesting import RiskkitStrategy`) and call
+  `risk_long()` / `risk_short()`; every entry is sized **and** validated by one
+  `RiskConfig`, with closed trades fed back to the session manager. See
+  [`examples/backtesting_riskmanager.py`](examples/backtesting_riskmanager.py)
+  (full façade) or [`examples/backtesting_py_strategy.py`](examples/backtesting_py_strategy.py)
+  (just `PositionSizer`, by hand).
 - **freqtrade** — [`examples/freqtrade_callbacks.py`](examples/freqtrade_callbacks.py)
   drives `custom_stake_amount` from your risk model instead of a flat stake.
 - **your own loop** — [`examples/risk_manager.py`](examples/risk_manager.py)
