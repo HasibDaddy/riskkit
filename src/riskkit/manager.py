@@ -87,6 +87,8 @@ class RiskConfig:
     # A baseline cap on concurrently open positions (None = unlimited). The
     # drawdown manager can tighten this further at deep tiers.
     max_concurrent: int | None = None
+    # Cap on total open risk-at-stop ("heat") as a % of equity (None = unlimited).
+    max_portfolio_heat_pct: float | None = None
 
     # Per-component overrides — passed verbatim to each constructor.
     sizing: dict = field(default_factory=dict)
@@ -159,6 +161,7 @@ class RiskConfig:
             base_risk_pct=0.5,
             max_notional_pct=3.0,
             max_concurrent=2,
+            max_portfolio_heat_pct=4.0,
             sizing=dict(max_risk_pct=1.0, min_risk_pct=0.2, high_conviction_size_mult=1.25),
             drawdown=dict(tier1_pct=2, tier2_pct=4, tier3_pct=6, halt_pct=8,
                           weekly_loss_pause_pct=2),
@@ -176,6 +179,7 @@ class RiskConfig:
             base_risk_pct=1.0,
             max_notional_pct=5.0,
             max_concurrent=4,
+            max_portfolio_heat_pct=8.0,
             sizing=dict(max_risk_pct=1.5, min_risk_pct=0.25, high_conviction_size_mult=1.5),
             drawdown=dict(tier1_pct=3, tier2_pct=5, tier3_pct=7, halt_pct=10,
                           weekly_loss_pause_pct=3),
@@ -193,6 +197,7 @@ class RiskConfig:
             base_risk_pct=2.0,
             max_notional_pct=10.0,
             max_concurrent=8,
+            max_portfolio_heat_pct=15.0,
             sizing=dict(max_risk_pct=3.0, min_risk_pct=0.5, high_conviction_size_mult=2.0),
             drawdown=dict(tier1_pct=5, tier2_pct=8, tier3_pct=12, halt_pct=18,
                           weekly_loss_pause_pct=6),
@@ -263,6 +268,11 @@ class OpenPosition:
     entry_price: float
     stop_price: float
     strategy: str = "default"
+
+    @property
+    def risk_amount(self) -> float:
+        """Capital at risk if the stop is hit (units × distance to stop)."""
+        return abs(self.entry_price - self.stop_price) * self.units
 
 
 @dataclass
@@ -341,8 +351,10 @@ class RiskManager:
             "max_daily_trades": self.session.max_trades,
             "max_daily_loss_pct": self.session.max_loss_pct,
             "min_seconds_between_trades": self.session.min_minutes_between * 60,
-            **self.config.validator,
         }
+        if self.config.max_portfolio_heat_pct is not None:
+            validator_kwargs["max_portfolio_heat_pct"] = self.config.max_portfolio_heat_pct
+        validator_kwargs.update(self.config.validator)   # explicit overrides win
         self.validator = PreTradeValidator(**validator_kwargs)
 
         self._equity: float | None = None
@@ -379,6 +391,12 @@ class RiskManager:
         if not self._equity:
             return 0.0
         return sum(p.notional for p in self._open.values()) / self._equity * 100.0
+
+    def portfolio_heat_pct(self) -> float:
+        """Total open risk-at-stop ("heat") as a percentage of current equity."""
+        if not self._equity:
+            return 0.0
+        return sum(p.risk_amount for p in self._open.values()) / self._equity * 100.0
 
     # ------------------------------------------------------------------ evaluate
 
@@ -488,6 +506,7 @@ class RiskManager:
             equity=equity,
             free_balance=intent.free_balance,
             current_total_exposure_pct=self.exposure_pct(),
+            current_portfolio_heat_pct=self.portfolio_heat_pct(),
             open_concurrent_positions=len(self._open),
             daily_loss_pct=daily_loss_pct,
             daily_trade_count=self.session.day_trades,

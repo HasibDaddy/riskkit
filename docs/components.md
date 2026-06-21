@@ -23,6 +23,12 @@ cooldowns, profit target hit) that have no dedicated validator flag. The
 underlying components are exposed as attributes (`.sizer`, `.drawdown`, `.stops`,
 `.correlation`, `.session`, `.validator`) when you need to reach past the façade.
 
+Because the manager tracks the open book, it enforces two portfolio-level caps as
+you trade: total open **notional** (`max_notional_pct` extended across positions)
+and total open **heat** — the capital actually at risk if every stop is hit
+(`max_portfolio_heat_pct`, off by default). Read either live with
+`exposure_pct()` / `portfolio_heat_pct()`.
+
 ## PositionSizer
 
 Volatility-adjusted fixed-fractional sizing. You pick a base risk fraction; the

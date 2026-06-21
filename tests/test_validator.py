@@ -58,3 +58,15 @@ def test_halt_flags_block():
     v = PreTradeValidator()
     assert not v.validate(clean_proposal(drawdown_halted=True)).passed
     assert not v.validate(clean_proposal(correlation_blocked=True)).passed
+
+
+def test_portfolio_heat_check_only_when_configured():
+    # Off by default: the check is not even present.
+    assert not any(c.name == "portfolio_heat_ok"
+                   for c in PreTradeValidator().validate(clean_proposal()).details)
+
+    # With a cap, projected heat = current open heat + this trade's risk.
+    v = PreTradeValidator(max_portfolio_heat_pct=3.0)
+    blocked = v.validate(clean_proposal(current_portfolio_heat_pct=3.5))
+    assert any(f.name == "portfolio_heat_ok" for f in blocked.failures)
+    assert v.validate(clean_proposal(current_portfolio_heat_pct=1.0)).passed

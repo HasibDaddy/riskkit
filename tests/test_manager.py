@@ -230,6 +230,29 @@ def test_concurrency_cap_blocks():
     assert any("concurrent" in r for r in d2.reasons)
 
 
+def test_portfolio_heat_cap_blocks_when_total_risk_exceeds():
+    rm = RiskManager(RiskConfig(max_portfolio_heat_pct=2.5))
+    rm.on_equity(10_000, now=T0)
+    # Wide stop → each trade risks ~1% of equity (risk-based, below the notional cap).
+    wide = dict(entry_price=100.0, stop_price=50.0, target_price=200.0)
+    for sym in ("A", "B"):
+        d = rm.evaluate(clean_intent(symbol=sym, **wide), now=T0)
+        assert d.ok
+        rm.on_fill(d)
+    assert rm.portfolio_heat_pct() == pytest.approx(2.0)        # 2 x 1%
+
+    d3 = rm.evaluate(clean_intent(symbol="C", **wide), now=T0)  # projected 3% > 2.5%
+    assert not d3.ok
+    assert any("heat" in r for r in d3.reasons)
+
+
+def test_no_heat_cap_by_default():
+    rm = RiskManager()
+    rm.on_equity(10_000, now=T0)
+    d = rm.evaluate(clean_intent(entry_price=100.0, stop_price=50.0, target_price=200.0), now=T0)
+    assert not any(c.name == "portfolio_heat_ok" for c in d.validation.details)
+
+
 def test_on_close_frees_slot_and_feeds_session():
     rm = RiskManager()
     rm.on_equity(10_000, now=T0)

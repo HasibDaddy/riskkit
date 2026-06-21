@@ -5,6 +5,12 @@ All notable changes to this project are documented here. This project adheres to
 
 ## [Unreleased]
 
+### Added
+- Portfolio-level **heat** cap — `RiskConfig(max_portfolio_heat_pct=...)` limits the
+  total capital at risk across open positions (Σ units × distance-to-stop), checked
+  by the validator and surfaced via `RiskManager.portfolio_heat_pct()`. Off by
+  default; the presets set it (conservative 4% / balanced 8% / aggressive 15%).
+
 ## [0.3.0] - 2026-06-22
 
 ### Added

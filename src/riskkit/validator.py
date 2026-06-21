@@ -54,6 +54,7 @@ class TradeProposal:
     equity: float = 0.0
     free_balance: float = float("inf")
     current_total_exposure_pct: float = 0.0
+    current_portfolio_heat_pct: float = 0.0   # open risk-at-stop, excl. this trade
     open_concurrent_positions: int = 0
     daily_loss_pct: float = 0.0
     daily_trade_count: int = 0
@@ -75,6 +76,7 @@ class PreTradeValidator:
         max_quote_age_sec: float = 120.0,
         max_notional_pct: float = 4.0,
         max_total_exposure_pct: float = 10.0,
+        max_portfolio_heat_pct: float = float("inf"),
         max_daily_loss_pct: float = 1.5,
         max_daily_trades: int = 5,
         min_score: int = 70,
@@ -90,6 +92,7 @@ class PreTradeValidator:
         self.max_quote_age = max_quote_age_sec
         self.max_notional_pct = max_notional_pct
         self.max_total_exposure_pct = max_total_exposure_pct
+        self.max_portfolio_heat_pct = max_portfolio_heat_pct
         self.max_daily_loss_pct = max_daily_loss_pct
         self.max_daily_trades = max_daily_trades
         self.min_score = min_score
@@ -126,6 +129,15 @@ class PreTradeValidator:
         projected = p.current_total_exposure_pct + notional_pct
         results.append(CheckResult("total_exposure_cap", projected <= self.max_total_exposure_pct,
                                    f"projected exposure {projected:.2f}% vs cap {self.max_total_exposure_pct}%"))
+        # Portfolio heat: total risk-at-stop across open positions plus this one.
+        # Only checked when a cap is configured (off by default).
+        if self.max_portfolio_heat_pct != float("inf"):
+            trade_risk = abs(p.entry_price - p.stop_price) * p.size_units
+            trade_risk_pct = (trade_risk / p.equity * 100.0) if p.equity else 0.0
+            projected_heat = p.current_portfolio_heat_pct + trade_risk_pct
+            results.append(CheckResult("portfolio_heat_ok",
+                                       projected_heat <= self.max_portfolio_heat_pct,
+                                       f"projected heat {projected_heat:.2f}% vs cap {self.max_portfolio_heat_pct}%"))
         results.append(CheckResult("sufficient_balance", p.free_balance >= p.notional * 1.01,
                                    f"free={p.free_balance:.2f} need={p.notional * 1.01:.2f}"))
 
