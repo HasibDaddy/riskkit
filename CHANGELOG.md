@@ -17,6 +17,11 @@ All notable changes to this project are documented here. This project adheres to
 - `RiskConfig` presets (`conservative` / `balanced` / `aggressive`, plus
   `RiskConfig.preset(name)`) and loaders — `RiskConfig.from_dict()`,
   `RiskConfig.to_dict()`, and `RiskConfig.from_yaml()` (new `yaml` extra).
+- freqtrade adapter — `riskkit.adapters.freqtrade.FreqtradeRiskManager`, which
+  drives `custom_stake_amount` / `confirm_trade_entry` from a `RiskManager`
+  (framework-agnostic: it imports nothing from freqtrade).
+- vectorbt adapter — `riskkit.adapters.vectorbt.size_signals`, which sizes an
+  array of entry signals with riskkit for `Portfolio.from_signals`.
 - Runnable integration examples for backtesting.py and freqtrade.
 - mkdocs documentation site (Home / Quickstart / Components / Integrations).
 - PyPI trusted-publishing release workflow and `PUBLISHING.md` guide.

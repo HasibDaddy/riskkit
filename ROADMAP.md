@@ -29,8 +29,10 @@ here the focus is making them effortless to adopt and deeper where it counts.
 - **First-class framework adapters:**
   - backtesting.py ✅ *shipped* — the `RiskkitStrategy` mixin auto-sizes and
     validates entries via `RiskManager` (`riskkit.adapters.backtesting`).
-  - freqtrade — a ready strategy mixin / documented callbacks.
-  - vectorbt — helpers to apply sizing & drawdown control to vectorized signals.
+  - freqtrade ✅ *shipped* — `FreqtradeRiskManager` drives `custom_stake_amount` /
+    `confirm_trade_entry` (`riskkit.adapters.freqtrade`).
+  - vectorbt ✅ *shipped* — `size_signals` sizes vectorized entry signals
+    (`riskkit.adapters.vectorbt`).
 - **Config presets** ✅ *shipped* — `RiskConfig.conservative()` / `.balanced()` /
   `.aggressive()` (and `RiskConfig.preset(name)`); load from a dict
   (`from_dict`) or a YAML file (`from_yaml`).

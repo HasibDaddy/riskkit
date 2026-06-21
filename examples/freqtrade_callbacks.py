@@ -1,64 +1,58 @@
 """Integration example: riskkit inside a freqtrade strategy.
 
-freqtrade lets a strategy override how much to stake per trade via the
-``custom_stake_amount`` callback. That's the natural seam for riskkit's
-PositionSizer — your entry/exit signals stay in ``populate_*``, and the risk
-model decides size.
+freqtrade is composition-friendly — keep your signals in ``populate_*`` and let
+``FreqtradeRiskManager`` drive sizing and the entry veto from the strategy
+callbacks. The helper imports nothing from freqtrade (you pass it the values
+freqtrade hands your callbacks), so this is a documented snippet you drop into
+your own ``IStrategy`` subclass.
 
-This is a documented snippet, not a runnable script (freqtrade is a large
-dependency and runs its own process). Drop these methods into your
-``IStrategy`` subclass.
+See ``riskkit.adapters.freqtrade`` for the full API.
 """
-from riskkit import PositionSizer, SizingInputs
-
-# A single risk policy for the whole strategy.
-_SIZER = PositionSizer(base_risk_pct=1.0, max_notional_pct=4.0)
+from riskkit import RiskConfig
+from riskkit.adapters.freqtrade import FreqtradeRiskManager
 
 
-def custom_stake_amount(
-    self,
-    pair: str,
-    current_time,
-    current_rate: float,
-    proposed_stake: float,
-    min_stake,
-    max_stake: float,
-    leverage: float,
-    entry_tag,
-    side: str,
-    **kwargs,
-) -> float:
-    """Size the trade with riskkit instead of a flat stake.
+class RiskkitFreqtradeMixin:
+    """Illustrative IStrategy methods. Mix these into your own strategy."""
 
-    Assumes you've stashed an ATR and a stop price for ``pair`` (e.g. computed in
-    ``populate_indicators`` / ``confirm_trade_entry``). ``self.wallets`` gives
-    total equity.
-    """
-    equity = self.wallets.get_total_stake_amount()
-    atr = self.custom_info[pair]["atr"]
-    atr_baseline = self.custom_info[pair]["atr_baseline"]
-    stop_price = self.custom_info[pair]["stop_price"]
+    def bot_start(self) -> None:
+        # One risk policy for the whole strategy (try a preset to start).
+        self.risk = FreqtradeRiskManager(RiskConfig.balanced())
 
-    sized = _SIZER.size(SizingInputs(
-        equity=equity,
-        entry_price=current_rate,
-        stop_price=stop_price,
-        atr=atr,
-        atr_baseline=atr_baseline,
-    ))
-    if sized.units <= 0:
-        return 0.0  # riskkit vetoed the size -> freqtrade skips the entry
+    def custom_stake_amount(
+        self, pair, current_time, current_rate, proposed_stake,
+        min_stake, max_stake, leverage, entry_tag, side, **kwargs,
+    ) -> float:
+        """Size the trade with riskkit; returning 0.0 makes freqtrade skip it.
 
-    # Clamp the riskkit notional into freqtrade's allowed stake range.
-    stake = sized.notional
-    if max_stake:
-        stake = min(stake, max_stake)
-    if min_stake:
-        stake = max(stake, min_stake)
-    return stake
+        Assumes you stashed an ATR and stop price for ``pair`` (e.g. in
+        ``populate_indicators``). ``self.wallets`` gives total equity.
+        """
+        info = self.custom_info[pair]
+        return self.risk.stake_amount(
+            pair=pair, side=side,
+            equity=self.wallets.get_total_stake_amount(),
+            current_rate=current_rate,
+            stop_price=info["stop_price"],
+            max_stake=max_stake, min_stake=min_stake,
+            score=info.get("score", 100),
+            atr=info.get("atr", 0.0), atr_baseline=info.get("atr_baseline", 0.0),
+            now=current_time,
+        )
 
+    def confirm_trade_entry(self, pair, *args, **kwargs) -> bool:
+        """Mirror riskkit's verdict, and register the fill in the open book."""
+        allowed = self.risk.confirm_entry(pair)
+        if allowed:
+            self.risk.on_fill(pair)
+        return allowed
 
-# For exits, riskkit's StopEngine is bar-driven (see examples/pipeline.py and
-# examples/backtesting_py_strategy.py). In freqtrade you'd advance a StopStack in
-# `custom_stoploss` using the latest candle, then return the active stop as a
-# ratio relative to current_rate.
+    def confirm_trade_exit(self, pair, trade, *args, **kwargs) -> bool:
+        """Feed the closed round-trip back so streaks / cooldowns stay live."""
+        self.risk.on_exit(
+            pair=pair, pnl=trade.calc_profit(rate=kwargs.get("rate")),
+            pnl_pct=trade.calc_profit_ratio(rate=kwargs.get("rate")) * 100.0,
+            open_time=trade.open_date_utc, close_time=kwargs.get("current_time"),
+            amount=trade.amount, side="long",
+        )
+        return True

@@ -163,8 +163,14 @@ runnable:
   [`examples/backtesting_riskmanager.py`](examples/backtesting_riskmanager.py)
   (full façade) or [`examples/backtesting_py_strategy.py`](examples/backtesting_py_strategy.py)
   (just `PositionSizer`, by hand).
-- **freqtrade** — [`examples/freqtrade_callbacks.py`](examples/freqtrade_callbacks.py)
-  drives `custom_stake_amount` from your risk model instead of a flat stake.
+- **freqtrade** — `FreqtradeRiskManager`
+  (`from riskkit.adapters.freqtrade import FreqtradeRiskManager`) drives
+  `custom_stake_amount` + `confirm_trade_entry` from one `RiskConfig`; see
+  [`examples/freqtrade_callbacks.py`](examples/freqtrade_callbacks.py).
+- **vectorbt** — `size_signals`
+  (`from riskkit.adapters.vectorbt import size_signals`) turns entry signals into
+  a riskkit-sized array for `Portfolio.from_signals`; see
+  [`examples/vectorbt_sizing.py`](examples/vectorbt_sizing.py).
 - **your own loop** — [`examples/risk_manager.py`](examples/risk_manager.py)
   drives the full `RiskManager` façade end-to-end;
   [`examples/pipeline.py`](examples/pipeline.py) shows the same flow wired by hand.
@@ -180,7 +186,8 @@ into the popular frameworks:
 - [x] `PositionSizer`, `DrawdownManager`, `StopEngine`
 - [x] `CorrelationGuard`, `SessionManager`, `PreTradeValidator`
 - [x] A single `RiskManager` façade that wires all six together with one config
-- [ ] First-class adapters / examples for backtesting.py, vectorbt, and freqtrade
+- [x] Config presets (conservative / balanced / aggressive) + dict/YAML loading
+- [x] First-class adapters for backtesting.py, freqtrade, and vectorbt
 - [ ] A hosted docs site with end-to-end recipes
 
 Feedback on the API is genuinely welcome — open an issue. See the full

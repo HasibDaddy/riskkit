@@ -46,9 +46,63 @@ in both — the point is that the risk layer is identical no matter what you swa
 
 ## freqtrade
 
-[`examples/freqtrade_callbacks.py`](https://github.com/HasibDaddy/riskkit/blob/main/examples/freqtrade_callbacks.py)
-shows riskkit driving `custom_stake_amount` so freqtrade stakes each trade
-according to your risk model instead of a flat amount.
+`FreqtradeRiskManager` adapts riskkit to freqtrade's callbacks — it imports
+nothing from freqtrade, so you compose it into your own `IStrategy`:
+
+```python
+from riskkit import RiskConfig
+from riskkit.adapters.freqtrade import FreqtradeRiskManager
+
+class MyStrategy(IStrategy):
+    def bot_start(self):
+        self.risk = FreqtradeRiskManager(RiskConfig.balanced())
+
+    def custom_stake_amount(self, pair, current_time, current_rate,
+                            proposed_stake, min_stake, max_stake,
+                            leverage, entry_tag, side, **kwargs):
+        info = self.custom_info[pair]
+        return self.risk.stake_amount(
+            pair=pair, side=side,
+            equity=self.wallets.get_total_stake_amount(),
+            current_rate=current_rate, stop_price=info["stop_price"],
+            max_stake=max_stake, min_stake=min_stake,
+            score=info.get("score", 100), now=current_time,
+        )
+
+    def confirm_trade_entry(self, pair, *args, **kwargs):
+        allowed = self.risk.confirm_entry(pair)
+        if allowed:
+            self.risk.on_fill(pair)
+        return allowed
+```
+
+A returned stake of `0.0` makes freqtrade skip the entry, so sizing and the veto
+can both live in `custom_stake_amount`. Call `on_fill()` / `on_exit()` so
+cross-pair correlation, exposure, and session state stay current. Full snippet:
+[`examples/freqtrade_callbacks.py`](https://github.com/HasibDaddy/riskkit/blob/main/examples/freqtrade_callbacks.py).
+
+## vectorbt
+
+vectorbt is vectorized, so riskkit slots in at the *sizing* step: turn entry
+signals into a size array with `size_signals`, then pass it to
+`Portfolio.from_signals`:
+
+```python
+from riskkit.adapters.vectorbt import size_signals
+
+sizes = size_signals(
+    equity=10_000,
+    entry_prices=close.where(entries),     # price where entering, else NaN
+    stop_prices=close * 0.97,
+    atr=atr, atr_baseline=atr.rolling(100).mean(),
+)
+pf = vbt.Portfolio.from_signals(close, entries, exits,
+                                size=sizes, size_type="value")
+```
+
+The stateful guards (drawdown halting, session caps) don't vectorize — step
+through bars with the `RiskManager` for those. Runnable demo:
+[`examples/vectorbt_sizing.py`](https://github.com/HasibDaddy/riskkit/blob/main/examples/vectorbt_sizing.py).
 
 ## Your own loop
 
