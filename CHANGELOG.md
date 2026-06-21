@@ -10,6 +10,9 @@ All notable changes to this project are documented here. This project adheres to
   total capital at risk across open positions (Σ units × distance-to-stop), checked
   by the validator and surfaced via `RiskManager.portfolio_heat_pct()`. Off by
   default; the presets set it (conservative 4% / balanced 8% / aggressive 15%).
+- Property-based tests (hypothesis) for the core invariants: a position never
+  exceeds its notional/risk caps, and size never increases after losses or deeper
+  drawdown (anti-martingale).
 
 ## [0.3.0] - 2026-06-22
 

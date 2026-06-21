@@ -39,7 +39,7 @@ dependencies = []
 pandas = ["pandas>=1.0"]
 backtesting = ["backtesting>=0.3"]
 yaml = ["pyyaml>=5.0"]
-dev = ["pytest>=7.0", "pandas>=1.0", "backtesting>=0.3", "pyyaml>=5.0"]
+dev = ["pytest>=7.0", "pandas>=1.0", "backtesting>=0.3", "pyyaml>=5.0", "hypothesis>=6.0"]
 docs = ["mkdocs-material>=9.0"]
 
 [project.urls]

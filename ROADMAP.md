@@ -43,8 +43,8 @@ here the focus is making them effortless to adopt and deeper where it counts.
 - More stops: chandelier, parabolic SAR, structure-based.
 - Portfolio-level risk: total open "heat" ✅ *shipped* (`max_portfolio_heat_pct`);
   next — sector / asset-class caps, simple VaR/CVaR.
-- Property-based tests (hypothesis) for the core invariants:
-  *never increase risk after a loss; never exceed configured caps.*
+- Property-based tests (hypothesis) for the core invariants ✅ *shipped* —
+  *never increase risk after a loss or deeper drawdown; never exceed configured caps.*
 
 ## v0.5 — Observability & docs
 
