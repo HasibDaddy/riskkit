@@ -5,6 +5,8 @@ All notable changes to this project are documented here. This project adheres to
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-22
+
 ### Added
 - `RiskManager` façade — wires all six components from a single `RiskConfig` and
   turns one `TradeIntent` into a sized, validated `RiskDecision` in a single
