@@ -38,9 +38,10 @@ hands back an auditable :class:`RiskDecision`: how big, where the stop sits, and
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field, replace
+from dataclasses import asdict, dataclass, field, fields, replace
 from datetime import datetime, timezone
 from math import inf
+from typing import Any, Mapping
 
 from .correlation import CorrelationDecision, CorrelationGuard
 from .drawdown import DrawdownManager, DrawdownState
@@ -52,6 +53,9 @@ from .validator import PreTradeValidator, TradeProposal, ValidationResult
 # Mirrors PreTradeValidator's own default; also the façade's multi-position
 # baseline for the total-exposure cap.
 _DEFAULT_TOTAL_EXPOSURE_PCT = 10.0
+
+# RiskConfig fields that are per-component keyword-argument dicts.
+_COMPONENT_FIELDS = ("sizing", "drawdown", "stops", "correlation", "session", "validator")
 
 
 @dataclass
@@ -91,6 +95,113 @@ class RiskConfig:
     correlation: dict = field(default_factory=dict)
     session: dict = field(default_factory=dict)
     validator: dict = field(default_factory=dict)
+
+    # ----------------------------------------------------------- serialization
+
+    def to_dict(self) -> dict[str, Any]:
+        """Return this config as a plain nested dict (round-trips with :meth:`from_dict`)."""
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: Mapping[str, Any]) -> "RiskConfig":
+        """Build a config from a plain mapping (e.g. parsed JSON/TOML/YAML).
+
+        Unknown top-level keys and non-dict component sections raise rather than
+        being silently dropped, so a typo'd config fails loudly.
+        """
+        valid = {f.name for f in fields(cls)}
+        unknown = set(data) - valid
+        if unknown:
+            raise ValueError(
+                f"unknown RiskConfig fields {sorted(unknown)}; valid keys are {sorted(valid)}"
+            )
+        for key in _COMPONENT_FIELDS:
+            if key in data and not isinstance(data[key], Mapping):
+                raise TypeError(
+                    f"RiskConfig.{key} must be a mapping, got {type(data[key]).__name__}"
+                )
+        return cls(**{k: dict(v) if k in _COMPONENT_FIELDS else v
+                      for k, v in data.items()})
+
+    @classmethod
+    def from_yaml(cls, path: str) -> "RiskConfig":
+        """Load a config from a YAML file. Requires PyYAML (``pip install riskkit[yaml]``)."""
+        try:
+            import yaml
+        except ImportError as exc:  # pragma: no cover - exercised without PyYAML
+            raise ImportError(
+                "from_yaml requires PyYAML. Install it with `pip install riskkit[yaml]`."
+            ) from exc
+        with open(path) as fh:
+            return cls.from_dict(yaml.safe_load(fh) or {})
+
+    # ----------------------------------------------------------------- presets
+
+    @classmethod
+    def preset(cls, name: str) -> "RiskConfig":
+        """Return a named preset: ``"conservative"``, ``"balanced"``, or ``"aggressive"``."""
+        builders = {
+            "conservative": cls.conservative,
+            "balanced": cls.balanced,
+            "aggressive": cls.aggressive,
+        }
+        try:
+            return builders[name]()
+        except KeyError:
+            raise ValueError(
+                f"unknown preset {name!r}; choose from {sorted(builders)}"
+            ) from None
+
+    @classmethod
+    def conservative(cls) -> "RiskConfig":
+        """Capital-preservation first: small risk, tight halts, a high quality bar."""
+        return cls(
+            base_risk_pct=0.5,
+            max_notional_pct=3.0,
+            max_concurrent=2,
+            sizing=dict(max_risk_pct=1.0, min_risk_pct=0.2, high_conviction_size_mult=1.25),
+            drawdown=dict(tier1_pct=2, tier2_pct=4, tier3_pct=6, halt_pct=8,
+                          weekly_loss_pause_pct=2),
+            stops=dict(breakeven_at_r=1.0, trailing_start_at_r=1.0, trailing_atr_multiplier=1.0),
+            correlation=dict(dynamic_threshold=0.6),
+            session=dict(max_trades_per_day=3, max_daily_loss_pct=1.0,
+                         min_minutes_between_trades=30, min_score=75),
+            validator=dict(min_score=75, min_rr_ratio=2.5, max_total_exposure_pct=6.0),
+        )
+
+    @classmethod
+    def balanced(cls) -> "RiskConfig":
+        """A sensible middle ground — close to the library defaults, made explicit."""
+        return cls(
+            base_risk_pct=1.0,
+            max_notional_pct=5.0,
+            max_concurrent=4,
+            sizing=dict(max_risk_pct=1.5, min_risk_pct=0.25, high_conviction_size_mult=1.5),
+            drawdown=dict(tier1_pct=3, tier2_pct=5, tier3_pct=7, halt_pct=10,
+                          weekly_loss_pause_pct=3),
+            stops=dict(breakeven_at_r=1.0, trailing_start_at_r=1.5, trailing_atr_multiplier=1.5),
+            correlation=dict(dynamic_threshold=0.75),
+            session=dict(max_trades_per_day=5, max_daily_loss_pct=1.5,
+                         min_minutes_between_trades=15, min_score=65),
+            validator=dict(min_score=70, min_rr_ratio=2.0, max_total_exposure_pct=20.0),
+        )
+
+    @classmethod
+    def aggressive(cls) -> "RiskConfig":
+        """More risk per trade and deeper drawdown tolerance — still anti-martingale."""
+        return cls(
+            base_risk_pct=2.0,
+            max_notional_pct=10.0,
+            max_concurrent=8,
+            sizing=dict(max_risk_pct=3.0, min_risk_pct=0.5, high_conviction_size_mult=2.0),
+            drawdown=dict(tier1_pct=5, tier2_pct=8, tier3_pct=12, halt_pct=18,
+                          weekly_loss_pause_pct=6),
+            stops=dict(breakeven_at_r=1.5, trailing_start_at_r=2.0, trailing_atr_multiplier=2.5),
+            correlation=dict(dynamic_threshold=0.85),
+            session=dict(max_trades_per_day=12, max_daily_loss_pct=3.0,
+                         min_minutes_between_trades=5, min_score=55),
+            validator=dict(min_score=60, min_rr_ratio=1.5, max_total_exposure_pct=50.0),
+        )
 
 
 @dataclass

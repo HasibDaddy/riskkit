@@ -31,7 +31,9 @@ here the focus is making them effortless to adopt and deeper where it counts.
     validates entries via `RiskManager` (`riskkit.adapters.backtesting`).
   - freqtrade — a ready strategy mixin / documented callbacks.
   - vectorbt — helpers to apply sizing & drawdown control to vectorized signals.
-- **Config presets** (conservative / balanced / aggressive); load from YAML or dict.
+- **Config presets** ✅ *shipped* — `RiskConfig.conservative()` / `.balanced()` /
+  `.aggressive()` (and `RiskConfig.preset(name)`); load from a dict
+  (`from_dict`) or a YAML file (`from_yaml`).
 
 ## v0.4 — Depth & correctness
 

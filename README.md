@@ -84,6 +84,13 @@ else:
 Reach past the façade to any single component when you need to — they're all
 exposed (`risk.sizer`, `risk.drawdown`, `risk.stops`, …) and usable standalone.
 
+Don't want to tune every knob? Start from a preset, or load policy from YAML:
+
+```python
+risk = RiskManager(RiskConfig.conservative())   # or .balanced() / .aggressive()
+cfg  = RiskConfig.from_yaml("risk.yaml")         # needs riskkit[yaml]
+```
+
 ### Sizing a trade
 
 ```python

@@ -14,6 +14,9 @@ All notable changes to this project are documented here. This project adheres to
   `Strategy` mixin whose `risk_long()` / `risk_short()` size and validate every
   entry through a `RiskManager` and feed closed trades back to the session. New
   `backtesting` optional extra; see `examples/backtesting_riskmanager.py`.
+- `RiskConfig` presets (`conservative` / `balanced` / `aggressive`, plus
+  `RiskConfig.preset(name)`) and loaders — `RiskConfig.from_dict()`,
+  `RiskConfig.to_dict()`, and `RiskConfig.from_yaml()` (new `yaml` extra).
 - Runnable integration examples for backtesting.py and freqtrade.
 - mkdocs documentation site (Home / Quickstart / Components / Integrations).
 - PyPI trusted-publishing release workflow and `PUBLISHING.md` guide.

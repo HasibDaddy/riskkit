@@ -41,6 +41,30 @@ The full runnable demo is in
 [`examples/risk_manager.py`](https://github.com/HasibDaddy/riskkit/blob/main/examples/risk_manager.py).
 Prefer to wire the components yourself? Everything below still works standalone.
 
+## Presets
+
+Don't want to tune every knob? Start from a preset and adjust from there:
+
+```python
+from riskkit import RiskConfig, RiskManager
+
+risk = RiskManager(RiskConfig.conservative())   # or .balanced() / .aggressive()
+risk = RiskManager(RiskConfig.preset("aggressive"))   # by name
+```
+
+The three presets move together along a risk-appetite axis — `conservative`
+risks less per trade, halts on shallower drawdowns, and demands a higher signal
+score and reward:risk; `aggressive` loosens all of those (and is still strictly
+anti-martingale). `balanced` mirrors the library defaults.
+
+Configs also load from a plain dict or a YAML file, so you can keep risk policy
+in version control:
+
+```python
+RiskConfig.from_dict({"base_risk_pct": 0.75, "drawdown": {"halt_pct": 8}})
+RiskConfig.from_yaml("risk.yaml")               # needs riskkit[yaml]
+```
+
 ## Sizing a trade
 
 ```python
