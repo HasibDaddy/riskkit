@@ -1,7 +1,18 @@
 # Publishing riskkit to PyPI
 
-The package name `riskkit` is currently free on PyPI. Two ways to publish — the
-automated one (recommended) and the manual one.
+**Status (2026-06-22):** v0.3.0 is **build-verified and ready to publish** —
+`python -m build` succeeds, `twine check` passes, and a clean-venv install of the
+wheel imports and runs (core is zero-dependency). The only steps left are the
+PyPI-account ones below.
+
+**Distribution name:** `riskkit` is unregistered on PyPI (the API returns 404), so
+try it first — `pip install riskkit` matching `import riskkit` is the ideal. PyPI
+*may* reject the upload as too similar to the existing `risk-kit`; if it does, fall
+back to a verified-free alternative (`riskkit-trading`, `riskkit-quant`, and
+`pyriskkit` are all unregistered) by changing only `name` in `pyproject.toml` —
+`import riskkit` stays the same. Never re-upload a version once published.
+
+Two ways to publish — the automated one (recommended) and the manual one.
 
 ## Recommended: Trusted Publishing (no tokens)
 
@@ -19,8 +30,8 @@ to trust your GitHub repo, then publishing is just pushing a tag.
    (Settings → Environments → New environment).
 4. Tag and push a release:
    ```bash
-   git tag v0.2.0
-   git push origin v0.2.0
+   git tag v0.3.0
+   git push origin v0.3.0
    ```
    The workflow builds the package and publishes it. Done.
 
@@ -37,12 +48,15 @@ python -m twine upload dist/*    # paste a PyPI API token when prompted
 
 - [x] GitHub handle (`HasibDaddy`) filled in across `pyproject.toml`,
       `mkdocs.yml`, `docs/`, and the workflow.
-- [ ] Confirm `version` in `pyproject.toml` and `src/riskkit/__init__.py` match.
-- [ ] `pytest` is green and CI passes on GitHub.
-- [ ] `python -m build` succeeds locally and `twine check dist/*` passes.
+- [x] `version` matches in `pyproject.toml` and `src/riskkit/__init__.py` (`0.3.0`).
+- [x] `pytest` green (90 tests) and CI passes on GitHub across Python 3.9–3.12.
+- [x] `python -m build` succeeds and `twine check dist/*` passes; the wheel installs
+      and imports cleanly in a fresh venv with zero dependencies.
 
 ## After publishing
 
 - Verify the install: `pip install riskkit` in a clean venv.
+- Update the README install line from the GitHub URL to `pip install riskkit`.
 - Bump the version for the next change (never re-upload the same version).
-- Publish the docs: `mkdocs gh-deploy` (serves from the `gh-pages` branch).
+- Docs are already live at https://hasibdaddy.github.io/riskkit/ (re-run
+  `mkdocs gh-deploy` after docs changes).
