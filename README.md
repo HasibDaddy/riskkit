@@ -181,7 +181,7 @@ runnable:
   drives the full `RiskManager` façade end-to-end;
   [`examples/pipeline.py`](examples/pipeline.py) shows the same flow wired by hand.
 
-Full docs (mkdocs): clone the repo, then `pip install -e ".[docs]" && mkdocs serve`.
+📖 **Full docs: https://hasibdaddy.github.io/riskkit/**
 
 ## Roadmap
 
