@@ -41,8 +41,9 @@ here the focus is making them effortless to adopt and deeper where it counts.
 
 - More sizers: volatility targeting, equal-risk, ATR-based, full/fractional Kelly.
 - More stops: chandelier, parabolic SAR, structure-based.
-- Portfolio-level risk: total open "heat" ✅ *shipped* (`max_portfolio_heat_pct`);
-  next — sector / asset-class caps, simple VaR/CVaR.
+- Portfolio-level risk: total open "heat" ✅ *shipped* (`max_portfolio_heat_pct`)
+  and VaR/CVaR ✅ *shipped* (`value_at_risk` / `conditional_value_at_risk`);
+  next — sector / asset-class caps.
 - Property-based tests (hypothesis) for the core invariants ✅ *shipped* —
   *never increase risk after a loss or deeper drawdown; never exceed configured caps.*
 

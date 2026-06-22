@@ -1,5 +1,11 @@
 # riskkit
 
+[![CI](https://github.com/HasibDaddy/riskkit/actions/workflows/ci.yml/badge.svg)](https://github.com/HasibDaddy/riskkit/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-mkdocs-1f6feb)](https://hasibdaddy.github.io/riskkit/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Python](https://img.shields.io/badge/python-3.9%E2%80%933.12-blue.svg)
+![Dependencies](https://img.shields.io/badge/runtime%20deps-0-brightgreen.svg)
+
 **A framework-agnostic risk-management toolkit for systematic traders.**
 
 Most open-source trading tools focus on the fun part — signals, indicators,

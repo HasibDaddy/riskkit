@@ -68,3 +68,9 @@ signals).
 The composable final gate. Assemble a `TradeProposal` and `validate()` runs every
 rule across market quality, sizing, risk limits, signal quality, and timing —
 returning a pass/fail line for each and an overall veto.
+
+## Metrics
+
+Standalone risk metrics over a return series: `value_at_risk(returns, confidence)`
+and `conditional_value_at_risk(returns, confidence)` (historical VaR and expected
+shortfall), both reported as positive loss magnitudes. Pure standard library.

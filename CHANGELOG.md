@@ -13,6 +13,9 @@ All notable changes to this project are documented here. This project adheres to
 - Property-based tests (hypothesis) for the core invariants: a position never
   exceeds its notional/risk caps, and size never increases after losses or deeper
   drawdown (anti-martingale).
+- `value_at_risk` / `conditional_value_at_risk` — historical VaR and expected
+  shortfall over a return series (positive loss magnitudes; CVaR ≥ VaR by
+  construction).
 
 ## [0.3.0] - 2026-06-22
 

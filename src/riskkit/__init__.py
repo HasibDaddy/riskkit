@@ -31,6 +31,7 @@ from __future__ import annotations
 from .correlation import CorrelationDecision, CorrelationGuard
 from .drawdown import DrawdownManager, DrawdownState
 from .manager import OpenPosition, RiskConfig, RiskDecision, RiskManager, TradeIntent
+from .metrics import conditional_value_at_risk, value_at_risk
 from .session import SessionDecision, SessionManager, TradeRecord
 from .sizing import PositionSizer, SizingInputs, SizingResult
 from .stops import Side, StopEngine, StopStack
@@ -68,5 +69,8 @@ __all__ = [
     "TradeProposal",
     "ValidationResult",
     "CheckResult",
+    # metrics
+    "value_at_risk",
+    "conditional_value_at_risk",
     "__version__",
 ]
