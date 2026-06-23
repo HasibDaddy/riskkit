@@ -43,9 +43,9 @@ dev = ["pytest>=7.0", "pandas>=1.0", "backtesting>=0.3", "pyyaml>=5.0", "hypothe
 docs = ["mkdocs-material>=9.0"]
 
 [project.urls]
-Homepage = "https://github.com/HasibDaddy/riskkit"
-Repository = "https://github.com/HasibDaddy/riskkit"
-Issues = "https://github.com/HasibDaddy/riskkit/issues"
+Homepage = "https://github.com/HasibVortex369/riskkit"
+Repository = "https://github.com/HasibVortex369/riskkit"
+Issues = "https://github.com/HasibVortex369/riskkit/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/riskkit"]

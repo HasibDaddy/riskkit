@@ -7,7 +7,7 @@ features.
 ## Dev setup
 
 ```bash
-git clone https://github.com/HasibDaddy/riskkit
+git clone https://github.com/HasibVortex369/riskkit
 cd riskkit
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"

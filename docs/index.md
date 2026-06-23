@@ -23,9 +23,9 @@ it numbers; it hands back auditable decisions you can drop into
 
 ```bash
 # Until the PyPI release lands, install from GitHub:
-pip install "git+https://github.com/HasibDaddy/riskkit.git"
+pip install "git+https://github.com/HasibVortex369/riskkit.git"
 # with dynamic correlation (adds pandas):
-pip install "riskkit[pandas] @ git+https://github.com/HasibDaddy/riskkit.git"
+pip install "riskkit[pandas] @ git+https://github.com/HasibVortex369/riskkit.git"
 ```
 
 ## The six components

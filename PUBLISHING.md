@@ -22,7 +22,7 @@ to trust your GitHub repo, then publishing is just pushing a tag.
 1. Create a PyPI account at https://pypi.org and verify your email.
 2. Go to **Your projects → Publishing → Add a pending publisher** and enter:
    - PyPI project name: `riskkit-quant`
-   - Owner: `HasibDaddy`
+   - Owner: `HasibVortex369`
    - Repository name: `riskkit`
    - Workflow name: `release.yml`
    - Environment name: `pypi`
@@ -46,7 +46,7 @@ python -m twine upload dist/*    # paste a PyPI API token when prompted
 
 ## Before the first publish — checklist
 
-- [x] GitHub handle (`HasibDaddy`) filled in across `pyproject.toml`,
+- [x] GitHub handle (`HasibVortex369`) filled in across `pyproject.toml`,
       `mkdocs.yml`, `docs/`, and the workflow.
 - [x] `version` matches in `pyproject.toml` and `src/riskkit/__init__.py` (`0.4.0`).
 - [x] `pytest` green (118 tests) and CI passes on GitHub across Python 3.9–3.12.
@@ -58,5 +58,5 @@ python -m twine upload dist/*    # paste a PyPI API token when prompted
 - Verify the install: `pip install riskkit-quant` in a clean venv (then `import riskkit`).
 - Update the README install line from the GitHub URL to `pip install riskkit-trading`.
 - Bump the version for the next change (never re-upload the same version).
-- Docs are already live at https://hasibdaddy.github.io/riskkit/ (re-run
+- Docs are already live at https://hasibvortex369.github.io/riskkit/ (re-run
   `mkdocs gh-deploy` after docs changes).

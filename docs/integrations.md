@@ -37,10 +37,10 @@ class SmaCross(RiskkitStrategy):
 ```
 
 The full runnable demo is
-[`examples/backtesting_riskmanager.py`](https://github.com/HasibDaddy/riskkit/blob/main/examples/backtesting_riskmanager.py)
+[`examples/backtesting_riskmanager.py`](https://github.com/HasibVortex369/riskkit/blob/main/examples/backtesting_riskmanager.py)
 (on the bundled GOOG data the risk layer holds max drawdown to ~1.5% while staying
 net positive). Prefer to wire a single component yourself?
-[`examples/backtesting_py_strategy.py`](https://github.com/HasibDaddy/riskkit/blob/main/examples/backtesting_py_strategy.py)
+[`examples/backtesting_py_strategy.py`](https://github.com/HasibVortex369/riskkit/blob/main/examples/backtesting_py_strategy.py)
 drives sizing straight from `PositionSizer`. The signal is a plain SMA crossover
 in both — the point is that the risk layer is identical no matter what you swap in.
 
@@ -79,7 +79,7 @@ class MyStrategy(IStrategy):
 A returned stake of `0.0` makes freqtrade skip the entry, so sizing and the veto
 can both live in `custom_stake_amount`. Call `on_fill()` / `on_exit()` so
 cross-pair correlation, exposure, and session state stay current. Full snippet:
-[`examples/freqtrade_callbacks.py`](https://github.com/HasibDaddy/riskkit/blob/main/examples/freqtrade_callbacks.py).
+[`examples/freqtrade_callbacks.py`](https://github.com/HasibVortex369/riskkit/blob/main/examples/freqtrade_callbacks.py).
 
 ## vectorbt
 
@@ -102,11 +102,11 @@ pf = vbt.Portfolio.from_signals(close, entries, exits,
 
 The stateful guards (drawdown halting, session caps) don't vectorize — step
 through bars with the `RiskManager` for those. Runnable demo:
-[`examples/vectorbt_sizing.py`](https://github.com/HasibDaddy/riskkit/blob/main/examples/vectorbt_sizing.py).
+[`examples/vectorbt_sizing.py`](https://github.com/HasibVortex369/riskkit/blob/main/examples/vectorbt_sizing.py).
 
 ## Your own loop
 
 Nothing about riskkit assumes a framework. The
-[`examples/pipeline.py`](https://github.com/HasibDaddy/riskkit/blob/main/examples/pipeline.py)
+[`examples/pipeline.py`](https://github.com/HasibVortex369/riskkit/blob/main/examples/pipeline.py)
 walkthrough wires drawdown posture → sizing → validation into a single
 `decide_trade()` function you can call from any event loop.

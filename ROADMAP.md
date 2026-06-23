@@ -53,7 +53,7 @@ here the focus is making them effortless to adopt and deeper where it counts.
 ## v0.5 — Observability & docs
 
 - A decision / audit-trail object with optional CSV / pandas export.
-- Deployed docs site ✅ *live* at https://hasibdaddy.github.io/riskkit/ — recipes
+- Deployed docs site ✅ *live* at https://hasibvortex369.github.io/riskkit/ — recipes
   and a short "risk 101" guide still to expand.
 - Benchmark notebooks quantifying riskkit's effect (e.g. drawdown reduction) on
   real strategies.

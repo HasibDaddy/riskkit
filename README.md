@@ -1,7 +1,7 @@
 # riskkit
 
-[![CI](https://github.com/HasibDaddy/riskkit/actions/workflows/ci.yml/badge.svg)](https://github.com/HasibDaddy/riskkit/actions/workflows/ci.yml)
-[![Docs](https://img.shields.io/badge/docs-mkdocs-1f6feb)](https://hasibdaddy.github.io/riskkit/)
+[![CI](https://github.com/HasibVortex369/riskkit/actions/workflows/ci.yml/badge.svg)](https://github.com/HasibVortex369/riskkit/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-mkdocs-1f6feb)](https://hasibvortex369.github.io/riskkit/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/python-3.9%E2%80%933.12-blue.svg)
 ![Dependencies](https://img.shields.io/badge/runtime%20deps-0-brightgreen.svg)
@@ -192,7 +192,7 @@ runnable:
   vol-targets, and vets a cross-sector book through the portfolio caps;
   [`examples/pipeline.py`](examples/pipeline.py) shows the same flow wired by hand.
 
-📖 **Full docs: https://hasibdaddy.github.io/riskkit/**
+📖 **Full docs: https://hasibvortex369.github.io/riskkit/**
 
 ## Roadmap
 
@@ -205,7 +205,7 @@ into the popular frameworks:
 - [x] A single `RiskManager` façade that wires all six together with one config
 - [x] Config presets (conservative / balanced / aggressive) + dict/YAML loading
 - [x] First-class adapters for backtesting.py, freqtrade, and vectorbt
-- [x] A [hosted docs site](https://hasibdaddy.github.io/riskkit/) with component recipes
+- [x] A [hosted docs site](https://hasibvortex369.github.io/riskkit/) with component recipes
 - [x] Portfolio caps (total-exposure, heat, per-sector) + standalone sizers (vol-target, risk-parity, Kelly) + VaR/CVaR
 - [x] A PyPI release (`pip install riskkit-quant`, then `import riskkit`)
 

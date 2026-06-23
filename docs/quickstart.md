@@ -38,7 +38,7 @@ risk.on_close(trade_record, equity_before=10_000)
 ```
 
 The full runnable demo is in
-[`examples/risk_manager.py`](https://github.com/HasibDaddy/riskkit/blob/main/examples/risk_manager.py).
+[`examples/risk_manager.py`](https://github.com/HasibVortex369/riskkit/blob/main/examples/risk_manager.py).
 Prefer to wire the components yourself? Everything below still works standalone.
 
 ## Presets
@@ -108,4 +108,4 @@ else:
 The [`RiskManager`](#the-whole-stack-one-call) façade above does this wiring for
 you. To assemble the flow yourself — drawdown posture → sizing → final-gate
 validation — see
-[`examples/pipeline.py`](https://github.com/HasibDaddy/riskkit/blob/main/examples/pipeline.py).
+[`examples/pipeline.py`](https://github.com/HasibVortex369/riskkit/blob/main/examples/pipeline.py).
