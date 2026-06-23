@@ -22,8 +22,11 @@ All notable changes to this project are documented here. This project adheres to
   over the cap. Untagged trades are never capped. Off by default; the presets set it
   (conservative 4% / balanced 10% / aggressive 25%).
 - Property-based tests (hypothesis) for the core invariants: a position never
-  exceeds its notional/risk caps, and size never increases after losses or deeper
-  drawdown (anti-martingale).
+  exceeds its notional/risk caps, size never increases after losses or deeper
+  drawdown (anti-martingale), the per-sector exposure cap is never breached across
+  random fill sequences, and the standalone sizers stay within bounds (vol-target
+  ≤ notional cap and falls as vol rises; inverse-vol weights sum to 1; Kelly within
+  `[0, fraction]` and rising with edge).
 - `value_at_risk` / `conditional_value_at_risk` — historical VaR and expected
   shortfall over a return series (positive loss magnitudes; CVaR ≥ VaR by
   construction).
