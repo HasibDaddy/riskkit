@@ -10,6 +10,12 @@ All notable changes to this project are documented here. This project adheres to
   total capital at risk across open positions (Σ units × distance-to-stop), checked
   by the validator and surfaced via `RiskManager.portfolio_heat_pct()`. Off by
   default; the presets set it (conservative 4% / balanced 8% / aggressive 15%).
+- Per-sector / asset-class **exposure** cap — `RiskConfig(max_exposure_per_sector_pct=...)`
+  keeps any one sector from dominating the book. Tag trades with `TradeIntent(sector=...)`;
+  the manager tracks open notional per sector (`RiskManager.sector_exposure_pct(sector)`
+  and `.sector_exposure()`) and the validator blocks an entry that would push its sector
+  over the cap. Untagged trades are never capped. Off by default; the presets set it
+  (conservative 4% / balanced 10% / aggressive 25%).
 - Property-based tests (hypothesis) for the core invariants: a position never
   exceeds its notional/risk caps, and size never increases after losses or deeper
   drawdown (anti-martingale).

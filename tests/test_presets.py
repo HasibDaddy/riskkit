@@ -30,6 +30,9 @@ def test_presets_ordered_by_risk_appetite():
     assert c.max_notional_pct < b.max_notional_pct < a.max_notional_pct
     assert c.max_concurrent < b.max_concurrent < a.max_concurrent
     assert c.max_portfolio_heat_pct < b.max_portfolio_heat_pct < a.max_portfolio_heat_pct
+    assert (c.max_exposure_per_sector_pct
+            < b.max_exposure_per_sector_pct
+            < a.max_exposure_per_sector_pct)
     assert c.drawdown["halt_pct"] < b.drawdown["halt_pct"] < a.drawdown["halt_pct"]
     # …while the quality bars relax.
     assert c.validator["min_rr_ratio"] > b.validator["min_rr_ratio"] > a.validator["min_rr_ratio"]

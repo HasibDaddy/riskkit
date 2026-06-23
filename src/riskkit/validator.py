@@ -55,6 +55,8 @@ class TradeProposal:
     free_balance: float = float("inf")
     current_total_exposure_pct: float = 0.0
     current_portfolio_heat_pct: float = 0.0   # open risk-at-stop, excl. this trade
+    sector: str = ""                          # sector / asset-class tag (for per-sector cap)
+    current_sector_exposure_pct: float = 0.0  # this sector's open notional %, excl. this trade
     open_concurrent_positions: int = 0
     daily_loss_pct: float = 0.0
     daily_trade_count: int = 0
@@ -77,6 +79,7 @@ class PreTradeValidator:
         max_notional_pct: float = 4.0,
         max_total_exposure_pct: float = 10.0,
         max_portfolio_heat_pct: float = float("inf"),
+        max_exposure_per_sector_pct: float = float("inf"),
         max_daily_loss_pct: float = 1.5,
         max_daily_trades: int = 5,
         min_score: int = 70,
@@ -93,6 +96,7 @@ class PreTradeValidator:
         self.max_notional_pct = max_notional_pct
         self.max_total_exposure_pct = max_total_exposure_pct
         self.max_portfolio_heat_pct = max_portfolio_heat_pct
+        self.max_sector_exposure_pct = max_exposure_per_sector_pct
         self.max_daily_loss_pct = max_daily_loss_pct
         self.max_daily_trades = max_daily_trades
         self.min_score = min_score
@@ -129,6 +133,14 @@ class PreTradeValidator:
         projected = p.current_total_exposure_pct + notional_pct
         results.append(CheckResult("total_exposure_cap", projected <= self.max_total_exposure_pct,
                                    f"projected exposure {projected:.2f}% vs cap {self.max_total_exposure_pct}%"))
+        # Per-sector exposure: keep any single sector / asset-class from dominating the
+        # book. Only checked when a cap is configured and the trade carries a sector tag.
+        if self.max_sector_exposure_pct != float("inf") and p.sector:
+            projected_sector = p.current_sector_exposure_pct + notional_pct
+            results.append(CheckResult(
+                "sector_exposure_ok",
+                projected_sector <= self.max_sector_exposure_pct,
+                f"sector '{p.sector}' projected {projected_sector:.2f}% vs cap {self.max_sector_exposure_pct}%"))
         # Portfolio heat: total risk-at-stop across open positions plus this one.
         # Only checked when a cap is configured (off by default).
         if self.max_portfolio_heat_pct != float("inf"):

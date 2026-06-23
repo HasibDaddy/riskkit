@@ -89,6 +89,10 @@ class RiskConfig:
     max_concurrent: int | None = None
     # Cap on total open risk-at-stop ("heat") as a % of equity (None = unlimited).
     max_portfolio_heat_pct: float | None = None
+    # Cap on open notional in any one sector / asset-class as a % of equity, so no
+    # single sector can dominate the book. Only bites on trades tagged with a
+    # ``TradeIntent.sector`` (None = unlimited).
+    max_exposure_per_sector_pct: float | None = None
 
     # Per-component overrides — passed verbatim to each constructor.
     sizing: dict = field(default_factory=dict)
@@ -162,6 +166,7 @@ class RiskConfig:
             max_notional_pct=3.0,
             max_concurrent=2,
             max_portfolio_heat_pct=4.0,
+            max_exposure_per_sector_pct=4.0,
             sizing=dict(max_risk_pct=1.0, min_risk_pct=0.2, high_conviction_size_mult=1.25),
             drawdown=dict(tier1_pct=2, tier2_pct=4, tier3_pct=6, halt_pct=8,
                           weekly_loss_pause_pct=2),
@@ -180,6 +185,7 @@ class RiskConfig:
             max_notional_pct=5.0,
             max_concurrent=4,
             max_portfolio_heat_pct=8.0,
+            max_exposure_per_sector_pct=10.0,
             sizing=dict(max_risk_pct=1.5, min_risk_pct=0.25, high_conviction_size_mult=1.5),
             drawdown=dict(tier1_pct=3, tier2_pct=5, tier3_pct=7, halt_pct=10,
                           weekly_loss_pause_pct=3),
@@ -198,6 +204,7 @@ class RiskConfig:
             max_notional_pct=10.0,
             max_concurrent=8,
             max_portfolio_heat_pct=15.0,
+            max_exposure_per_sector_pct=25.0,
             sizing=dict(max_risk_pct=3.0, min_risk_pct=0.5, high_conviction_size_mult=2.0),
             drawdown=dict(tier1_pct=5, tier2_pct=8, tier3_pct=12, halt_pct=18,
                           weekly_loss_pause_pct=6),
@@ -232,6 +239,7 @@ class TradeIntent:
     score: int = 100                # signal-quality score (0-100)
     strategy: str = "default"
     regime: str = ""
+    sector: str = ""                # sector / asset-class tag (enables the per-sector cap)
 
     # Volatility scaling for the sizer (optional; left at 0 → no vol scaling).
     atr: float = 0.0
@@ -268,6 +276,7 @@ class OpenPosition:
     entry_price: float
     stop_price: float
     strategy: str = "default"
+    sector: str = ""
 
     @property
     def risk_amount(self) -> float:
@@ -296,6 +305,7 @@ class RiskDecision:
     risk_pct: float
     risk_amount: float
     reasons: list[str] = field(default_factory=list)
+    sector: str = ""
 
     # Full component results, for auditing.
     sizing: SizingResult | None = None
@@ -354,6 +364,8 @@ class RiskManager:
         }
         if self.config.max_portfolio_heat_pct is not None:
             validator_kwargs["max_portfolio_heat_pct"] = self.config.max_portfolio_heat_pct
+        if self.config.max_exposure_per_sector_pct is not None:
+            validator_kwargs["max_exposure_per_sector_pct"] = self.config.max_exposure_per_sector_pct
         validator_kwargs.update(self.config.validator)   # explicit overrides win
         self.validator = PreTradeValidator(**validator_kwargs)
 
@@ -397,6 +409,28 @@ class RiskManager:
         if not self._equity:
             return 0.0
         return sum(p.risk_amount for p in self._open.values()) / self._equity * 100.0
+
+    def sector_exposure_pct(self, sector: str) -> float:
+        """Open notional in one sector / asset-class as a percentage of equity.
+
+        Untagged positions (``sector == ""``) never count toward any sector, so an
+        empty ``sector`` always returns ``0.0``.
+        """
+        if not self._equity or not sector:
+            return 0.0
+        return sum(
+            p.notional for p in self._open.values() if p.sector == sector
+        ) / self._equity * 100.0
+
+    def sector_exposure(self) -> dict[str, float]:
+        """Per-sector open notional as a percentage of equity, for tagged positions."""
+        if not self._equity:
+            return {}
+        out: dict[str, float] = {}
+        for p in self._open.values():
+            if p.sector:
+                out[p.sector] = out.get(p.sector, 0.0) + p.notional / self._equity * 100.0
+        return out
 
     # ------------------------------------------------------------------ evaluate
 
@@ -507,6 +541,8 @@ class RiskManager:
             free_balance=intent.free_balance,
             current_total_exposure_pct=self.exposure_pct(),
             current_portfolio_heat_pct=self.portfolio_heat_pct(),
+            sector=intent.sector,
+            current_sector_exposure_pct=self.sector_exposure_pct(intent.sector),
             open_concurrent_positions=len(self._open),
             daily_loss_pct=daily_loss_pct,
             daily_trade_count=self.session.day_trades,
@@ -537,6 +573,7 @@ class RiskManager:
             risk_pct=risk_pct,
             risk_amount=risk_amount,
             reasons=reasons,
+            sector=intent.sector,
             sizing=sized_audit,
             validation=validation,
             drawdown=dd,
@@ -561,6 +598,7 @@ class RiskManager:
             entry_price=decision.entry,
             stop_price=decision.stop,
             strategy=strategy,
+            sector=decision.sector,
         )
         self._open[pos.symbol] = pos
         return pos

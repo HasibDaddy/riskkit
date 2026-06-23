@@ -253,6 +253,51 @@ def test_no_heat_cap_by_default():
     assert not any(c.name == "portfolio_heat_ok" for c in d.validation.details)
 
 
+def test_sector_exposure_cap_blocks_concentration_but_allows_other_sectors():
+    # Raise the total-exposure cap out of the way so only the sector cap can bite.
+    rm = RiskManager(RiskConfig(
+        max_exposure_per_sector_pct=6.0,
+        validator=dict(max_total_exposure_pct=100.0),
+    ))
+    rm.on_equity(10_000, now=T0)
+
+    d1 = rm.evaluate(clean_intent(symbol="AAPL", sector="tech"), now=T0)
+    assert d1.ok
+    rm.on_fill(d1)
+    assert rm.sector_exposure_pct("tech") == pytest.approx(4.0)   # 400 / 10_000
+
+    # A second tech trade would push 'tech' to 8% > 6% → blocked on the sector cap.
+    blocked = rm.evaluate(clean_intent(symbol="MSFT", sector="tech"), now=T0)
+    assert not blocked.ok
+    assert any("sector" in r for r in blocked.reasons)
+
+    # The same trade in a different sector is fine (energy at 4% < 6%).
+    other = rm.evaluate(clean_intent(symbol="XOM", sector="energy"), now=T0)
+    assert other.ok
+
+
+def test_sector_exposure_breakdown_tracks_tagged_positions():
+    rm = RiskManager(RiskConfig(validator=dict(max_total_exposure_pct=100.0)))
+    rm.on_equity(10_000, now=T0)
+    for sym, sector in [("AAPL", "tech"), ("MSFT", "tech"), ("XOM", "energy")]:
+        rm.on_fill(rm.evaluate(clean_intent(symbol=sym, sector=sector), now=T0))
+    assert rm.sector_exposure() == pytest.approx({"tech": 8.0, "energy": 4.0})
+
+
+def test_no_sector_cap_by_default():
+    rm = RiskManager()
+    rm.on_equity(10_000, now=T0)
+    d = rm.evaluate(clean_intent(sector="tech"), now=T0)
+    assert not any(c.name == "sector_exposure_ok" for c in d.validation.details)
+
+
+def test_sector_cap_ignores_untagged_trades():
+    rm = RiskManager(RiskConfig(max_exposure_per_sector_pct=4.0))
+    rm.on_equity(10_000, now=T0)
+    d = rm.evaluate(clean_intent(), now=T0)   # no sector tag → cap does not apply
+    assert not any(c.name == "sector_exposure_ok" for c in d.validation.details)
+
+
 def test_on_close_frees_slot_and_feeds_session():
     rm = RiskManager()
     rm.on_equity(10_000, now=T0)

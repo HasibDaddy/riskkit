@@ -70,3 +70,19 @@ def test_portfolio_heat_check_only_when_configured():
     blocked = v.validate(clean_proposal(current_portfolio_heat_pct=3.5))
     assert any(f.name == "portfolio_heat_ok" for f in blocked.failures)
     assert v.validate(clean_proposal(current_portfolio_heat_pct=1.0)).passed
+
+
+def test_sector_exposure_check_only_when_configured_and_tagged():
+    # Off by default, even on a tagged trade.
+    assert not any(c.name == "sector_exposure_ok"
+                   for c in PreTradeValidator().validate(clean_proposal(sector="tech")).details)
+
+    # Configured but untagged → still absent (an empty sector is never capped).
+    v = PreTradeValidator(max_exposure_per_sector_pct=5.0)
+    assert not any(c.name == "sector_exposure_ok"
+                   for c in v.validate(clean_proposal(sector="")).details)
+
+    # Tagged + capped: projected = current sector exposure + this notional (100/10_000 = 1%).
+    blocked = v.validate(clean_proposal(sector="tech", current_sector_exposure_pct=4.5))
+    assert any(f.name == "sector_exposure_ok" for f in blocked.failures)   # 4.5 + 1 = 5.5 > 5
+    assert v.validate(clean_proposal(sector="tech", current_sector_exposure_pct=2.0)).passed  # 3 ≤ 5
