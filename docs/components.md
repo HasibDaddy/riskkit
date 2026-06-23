@@ -61,7 +61,9 @@ equity recovers, and a rolling weekly-loss guard pauses new entries for 24h.
 ## StopEngine
 
 Each position carries a **stack** of stops — initial, break-even (armed at 1R),
-ATR trailing, EMA trailing, time, and volatility. The tightest stop relative to
+ATR trailing, EMA trailing, chandelier (ATR from the highest high / lowest low
+since entry), structure (ratchets to a swing level you pass), PSAR (ratchets to a
+Parabolic SAR value you pass), time, and volatility. The tightest stop relative to
 price is active, and stops only ever move closer. Call `update()` once per bar;
 it returns an exit reason or `None`.
 

@@ -44,7 +44,7 @@ then, install straight from GitHub with the line above.)*
 |---|---|
 | `PositionSizer` | Volatility-adjusted fixed-fractional sizing with an optional half-Kelly ceiling, a reduction ladder for losing streaks / drawdowns, and a hard notional cap. |
 | `DrawdownManager` | Tracks high-water-mark drawdown, maps it onto a tier ladder (cut size → raise the bar → halt), with a recovery ramp and a rolling weekly-loss pause. |
-| `StopEngine` | A composable stop *stack* per position — initial, break-even, ATR trailing, EMA trailing, time, and volatility stops. The tightest one wins; stops only ever move closer. |
+| `StopEngine` | A composable stop *stack* per position — initial, break-even, ATR/EMA trailing, chandelier, structure (swing), PSAR, time, and volatility stops. The tightest one wins; stops only ever move closer. |
 | `CorrelationGuard` | At most one open position per correlation group. Groups can be static (you define them) or computed dynamically from a rolling return-correlation matrix. |
 | `SessionManager` | Daily trade/loss caps, profit-taking stops, minimum spacing, escalating cooldowns after losing streaks, and tilt detection. |
 | `PreTradeValidator` | The composable final gate: runs every rule against a proposed trade and vetoes it if any fails — returning exactly which checks passed and failed. |

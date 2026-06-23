@@ -6,6 +6,12 @@ All notable changes to this project are documented here. This project adheres to
 ## [Unreleased]
 
 ### Added
+- Three more **stops** in the `StopEngine` stack: **chandelier** (trails ATR from
+  the highest high / lowest low since entry — `StopStack(use_chandelier=True)`,
+  `StopEngine(chandelier_atr_multiplier=...)`), **structure** (ratchets to a swing
+  level you pass as `update(..., structure_level=...)`), and **PSAR** (ratchets to a
+  Parabolic SAR value you pass as `update(..., psar_value=...)`). All tighten-only;
+  `update()` gained optional `current_high` / `current_low` for the chandelier extreme.
 - Standalone, composable **sizers** (pure functions): `kelly_fraction()` (edge-optimal
   risk fraction, `fraction=0.5` for half-Kelly), `volatility_target_size()` (size a
   position to a target volatility, notional-capped), and `inverse_vol_weights()` (naive

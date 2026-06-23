@@ -10,7 +10,9 @@ of randomized inputs, not a handful of hand-picked cases:
   3. the per-sector exposure cap is never breached, whatever the fill sequence;
   4. the standalone sizers stay within bounds — vol-targeting never tops its
      notional cap and shrinks as volatility rises; inverse-vol weights sum to 1
-     and reward lower vol; Kelly stays in ``[0, fraction]`` and grows with edge.
+     and reward lower vol; Kelly stays in ``[0, fraction]`` and grows with edge;
+  5. a stop only ever moves *closer* to price — the active stop never loosens,
+     across every stop type in the stack.
 
 Skipped automatically when hypothesis isn't installed (it's in the `dev` extra).
 """
@@ -25,6 +27,8 @@ from riskkit import (
     RiskConfig,
     RiskManager,
     SizingInputs,
+    StopEngine,
+    StopStack,
     TradeIntent,
     inverse_vol_weights,
     kelly_fraction,
@@ -171,3 +175,33 @@ def test_kelly_fraction_bounded(p, win, loss, frac):
 def test_kelly_fraction_increases_with_edge(p1, p2, win, loss):
     assume(p1 <= p2)
     assert kelly_fraction(p1, win, loss) <= kelly_fraction(p2, win, loss) + 1e-9
+
+
+# ------------------------------------------------------------ v0.4: stop stack
+
+@given(
+    side=st.sampled_from(["long", "short"]),
+    moves=st.lists(st.tuples(prices, return_vols, prices, prices),
+                   min_size=1, max_size=20),
+)
+@settings(max_examples=300)
+def test_active_stop_never_loosens(side, moves):
+    """Every stop type is tighten-only, so the active stop is monotonic."""
+    eng = StopEngine()
+    initial = 98.0 if side == "long" else 102.0
+    stack = StopStack(side=side, entry_price=100.0, initial=initial, use_chandelier=True)
+    prev = stack.active_stop()
+    for price, atr, structure_level, psar_value in moves:
+        stack, reason = eng.update(
+            stack, current_price=price, current_atr=atr,
+            current_high=price, current_low=price,
+            structure_level=structure_level, psar_value=psar_value,
+        )
+        active = stack.active_stop()
+        if side == "long":
+            assert active >= prev - 1e-6        # a long's stop only ratchets up
+        else:
+            assert active <= prev + 1e-6        # a short's stop only ratchets down
+        prev = active
+        if reason is not None:
+            break
