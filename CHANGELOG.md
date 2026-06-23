@@ -5,6 +5,8 @@ All notable changes to this project are documented here. This project adheres to
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-23
+
 ### Added
 - Three more **stops** in the `StopEngine` stack: **chandelier** (trails ATR from
   the highest high / lowest low since entry — `StopStack(use_chandelier=True)`,

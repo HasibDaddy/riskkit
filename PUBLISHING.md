@@ -1,9 +1,9 @@
 # Publishing riskkit to PyPI
 
-**Status (2026-06-22):** v0.3.0 is **build-verified and ready to publish** —
+**Status (2026-06-23):** v0.4.0 is **build-verified and ready to publish** —
 `python -m build` succeeds, `twine check` passes, and a clean-venv install of the
-wheel imports and runs (core is zero-dependency). The only steps left are the
-PyPI-account ones below.
+wheel imports and runs the full v0.4 surface (core is zero-dependency). The only
+steps left are the PyPI-account ones below.
 
 **Distribution name:** `riskkit` is unregistered on PyPI (the API returns 404), so
 try it first — `pip install riskkit` matching `import riskkit` is the ideal. PyPI
@@ -30,8 +30,8 @@ to trust your GitHub repo, then publishing is just pushing a tag.
    (Settings → Environments → New environment).
 4. Tag and push a release:
    ```bash
-   git tag v0.3.0
-   git push origin v0.3.0
+   git tag v0.4.0
+   git push origin v0.4.0
    ```
    The workflow builds the package and publishes it. Done.
 
@@ -48,8 +48,8 @@ python -m twine upload dist/*    # paste a PyPI API token when prompted
 
 - [x] GitHub handle (`HasibDaddy`) filled in across `pyproject.toml`,
       `mkdocs.yml`, `docs/`, and the workflow.
-- [x] `version` matches in `pyproject.toml` and `src/riskkit/__init__.py` (`0.3.0`).
-- [x] `pytest` green (90 tests) and CI passes on GitHub across Python 3.9–3.12.
+- [x] `version` matches in `pyproject.toml` and `src/riskkit/__init__.py` (`0.4.0`).
+- [x] `pytest` green (118 tests) and CI passes on GitHub across Python 3.9–3.12.
 - [x] `python -m build` succeeds and `twine check dist/*` passes; the wheel installs
       and imports cleanly in a fresh venv with zero dependencies.
 
