@@ -5,13 +5,12 @@
 wheel imports and runs the full v0.4 surface (core is zero-dependency). The only
 steps left are the PyPI-account ones below.
 
-**Distribution name:** `riskkit-trading`. The ideal `riskkit` is unregistered (API
+**Distribution name:** `riskkit-quant`. The ideal `riskkit` is unregistered (API
 404) but PyPI's pending-publisher form rejects it as **too similar to the existing
-`risk-kit`**, so the distribution name is `riskkit-trading` (free, more distinct).
-The *import* name is unchanged: `pip install riskkit-trading` then `import riskkit`
-— exactly like `scikit-learn` → `import sklearn`. If the form ever rejects
-`riskkit-trading` too, `riskkit-quant` and `pyriskkit` are also free; change only
-`name` in `pyproject.toml` to match. Never re-upload a version once published.
+`risk-kit`**, and `riskkit-trading` was also rejected. The accepted name is
+`riskkit-quant` (free, distinct). The *import* name is unchanged:
+`pip install riskkit-quant` then `import riskkit` — exactly like `scikit-learn` →
+`import sklearn`. Never re-upload a version once published.
 
 Two ways to publish — the automated one (recommended) and the manual one.
 
@@ -22,7 +21,7 @@ to trust your GitHub repo, then publishing is just pushing a tag.
 
 1. Create a PyPI account at https://pypi.org and verify your email.
 2. Go to **Your projects → Publishing → Add a pending publisher** and enter:
-   - PyPI project name: `riskkit-trading`
+   - PyPI project name: `riskkit-quant`
    - Owner: `HasibDaddy`
    - Repository name: `riskkit`
    - Workflow name: `release.yml`
@@ -56,7 +55,7 @@ python -m twine upload dist/*    # paste a PyPI API token when prompted
 
 ## After publishing
 
-- Verify the install: `pip install riskkit-trading` in a clean venv (then `import riskkit`).
+- Verify the install: `pip install riskkit-quant` in a clean venv (then `import riskkit`).
 - Update the README install line from the GitHub URL to `pip install riskkit-trading`.
 - Bump the version for the next change (never re-upload the same version).
 - Docs are already live at https://hasibdaddy.github.io/riskkit/ (re-run

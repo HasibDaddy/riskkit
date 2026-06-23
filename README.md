@@ -208,7 +208,7 @@ into the popular frameworks:
 - [x] First-class adapters for backtesting.py, freqtrade, and vectorbt
 - [x] A [hosted docs site](https://hasibdaddy.github.io/riskkit/) with component recipes
 - [x] Portfolio caps (total-exposure, heat, per-sector) + standalone sizers (vol-target, risk-parity, Kelly) + VaR/CVaR
-- [ ] A PyPI release (`pip install riskkit-trading`, then `import riskkit`)
+- [ ] A PyPI release (`pip install riskkit-quant`, then `import riskkit`)
 
 Feedback on the API is genuinely welcome — open an issue. See the full
 [ROADMAP.md](ROADMAP.md), [CONTRIBUTING.md](CONTRIBUTING.md), and the
