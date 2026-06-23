@@ -192,13 +192,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/HasibDaddy/riskkit" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/HasibVortex369/riskkit" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    HasibDaddy/riskkit
+    HasibVortex369/riskkit
   </div>
 </a>
       </div>
@@ -238,13 +238,13 @@
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/HasibDaddy/riskkit" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/HasibVortex369/riskkit" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    HasibDaddy/riskkit
+    HasibVortex369/riskkit
   </div>
 </a>
     </div>
@@ -649,24 +649,41 @@ manager permitting an entry — the latter catches behavioural blocks (tilt,
 cooldowns, profit target hit) that have no dedicated validator flag. The
 underlying components are exposed as attributes (<code>.sizer</code>, <code>.drawdown</code>, <code>.stops</code>,
 <code>.correlation</code>, <code>.session</code>, <code>.validator</code>) when you need to reach past the façade.</p>
-<p>Because the manager tracks the open book, it enforces two portfolio-level caps as
-you trade: total open <strong>notional</strong> (<code>max_notional_pct</code> extended across positions)
-and total open <strong>heat</strong> — the capital actually at risk if every stop is hit
-(<code>max_portfolio_heat_pct</code>, off by default). Read either live with
-<code>exposure_pct()</code> / <code>portfolio_heat_pct()</code>.</p>
+<p>Because the manager tracks the open book, it enforces portfolio-level caps as you
+trade: total open <strong>notional</strong> (<code>max_notional_pct</code> extended across positions),
+total open <strong>heat</strong> — the capital actually at risk if every stop is hit
+(<code>max_portfolio_heat_pct</code>, off by default), and per-sector / asset-class
+<strong>concentration</strong> (<code>max_exposure_per_sector_pct</code>, off by default) so no single
+sector can dominate the book. Tag a trade's sector with <code>TradeIntent(sector=...)</code>;
+untagged trades are never sector-capped. Read any of these live with
+<code>exposure_pct()</code> / <code>portfolio_heat_pct()</code> / <code>sector_exposure_pct(sector)</code> (or
+<code>sector_exposure()</code> for the full per-sector breakdown).</p>
 <h2 id="positionsizer">PositionSizer</h2>
 <p>Volatility-adjusted fixed-fractional sizing. You pick a base risk fraction; the
 sizer scales it down when volatility is above baseline, applies an optional
 half-Kelly ceiling, runs a reduction ladder (losing streaks, drawdown tiers,
 daily loss), and enforces a hard notional cap. Returns the units <strong>and</strong> every
 multiplier that fired.</p>
+<p>When the stop-distance model isn't what you want, three standalone sizing helpers
+stand on their own (pure functions, no dependencies):</p>
+<ul>
+<li><code>kelly_fraction(win_rate, avg_win, avg_loss, fraction=1.0)</code> — the edge-optimal
+  risk fraction; pass <code>fraction=0.5</code> for half-Kelly. Clamps to 0 with no edge.</li>
+<li><code>volatility_target_size(equity, price, return_volatility, target_volatility_pct,
+  max_notional_pct=100)</code> — units sized so a position's expected volatility hits a
+  target % of equity (calmer instrument → larger position), capped by notional.</li>
+<li><code>inverse_vol_weights({symbol: volatility})</code> — naive risk-parity weights (∝ 1/σ)
+  that sum to 1.0, so every position contributes equal risk.</li>
+</ul>
 <h2 id="drawdownmanager">DrawdownManager</h2>
 <p>Tracks high-water-mark drawdown and maps it onto tiers: normal → 0.75x → 0.5x →
 0.25x → halt. A recovery ramp steps the tier back down one level at a time once
 equity recovers, and a rolling weekly-loss guard pauses new entries for 24h.</p>
 <h2 id="stopengine">StopEngine</h2>
 <p>Each position carries a <strong>stack</strong> of stops — initial, break-even (armed at 1R),
-ATR trailing, EMA trailing, time, and volatility. The tightest stop relative to
+ATR trailing, EMA trailing, chandelier (ATR from the highest high / lowest low
+since entry), structure (ratchets to a swing level you pass), PSAR (ratchets to a
+Parabolic SAR value you pass), time, and volatility. The tightest stop relative to
 price is active, and stops only ever move closer. Call <code>update()</code> once per bar;
 it returns an exit reason or <code>None</code>.</p>
 <h2 id="correlationguard">CorrelationGuard</h2>

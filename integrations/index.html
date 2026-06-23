@@ -190,13 +190,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/HasibDaddy/riskkit" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/HasibVortex369/riskkit" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    HasibDaddy/riskkit
+    HasibVortex369/riskkit
   </div>
 </a>
       </div>
@@ -236,13 +236,13 @@
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/HasibDaddy/riskkit" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/HasibVortex369/riskkit" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    HasibDaddy/riskkit
+    HasibVortex369/riskkit
   </div>
 </a>
     </div>
@@ -569,10 +569,10 @@ cooldowns, and drawdown halts are live through the backtest.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </code></pre></div>
 <p>The full runnable demo is
-<a href="https://github.com/HasibDaddy/riskkit/blob/main/examples/backtesting_riskmanager.py"><code>examples/backtesting_riskmanager.py</code></a>
+<a href="https://github.com/HasibVortex369/riskkit/blob/main/examples/backtesting_riskmanager.py"><code>examples/backtesting_riskmanager.py</code></a>
 (on the bundled GOOG data the risk layer holds max drawdown to ~1.5% while staying
 net positive). Prefer to wire a single component yourself?
-<a href="https://github.com/HasibDaddy/riskkit/blob/main/examples/backtesting_py_strategy.py"><code>examples/backtesting_py_strategy.py</code></a>
+<a href="https://github.com/HasibVortex369/riskkit/blob/main/examples/backtesting_py_strategy.py"><code>examples/backtesting_py_strategy.py</code></a>
 drives sizing straight from <code>PositionSizer</code>. The signal is a plain SMA crossover
 in both — the point is that the risk layer is identical no matter what you swap in.</p>
 <h2 id="freqtrade">freqtrade</h2>
@@ -606,7 +606,7 @@ nothing from freqtrade, so you compose it into your own <code>IStrategy</code>:<
 <p>A returned stake of <code>0.0</code> makes freqtrade skip the entry, so sizing and the veto
 can both live in <code>custom_stake_amount</code>. Call <code>on_fill()</code> / <code>on_exit()</code> so
 cross-pair correlation, exposure, and session state stay current. Full snippet:
-<a href="https://github.com/HasibDaddy/riskkit/blob/main/examples/freqtrade_callbacks.py"><code>examples/freqtrade_callbacks.py</code></a>.</p>
+<a href="https://github.com/HasibVortex369/riskkit/blob/main/examples/freqtrade_callbacks.py"><code>examples/freqtrade_callbacks.py</code></a>.</p>
 <h2 id="vectorbt">vectorbt</h2>
 <p>vectorbt is vectorized, so riskkit slots in at the <em>sizing</em> step: turn entry
 signals into a size array with <code>size_signals</code>, then pass it to
@@ -624,10 +624,10 @@ signals into a size array with <code>size_signals</code>, then pass it to
 </code></pre></div>
 <p>The stateful guards (drawdown halting, session caps) don't vectorize — step
 through bars with the <code>RiskManager</code> for those. Runnable demo:
-<a href="https://github.com/HasibDaddy/riskkit/blob/main/examples/vectorbt_sizing.py"><code>examples/vectorbt_sizing.py</code></a>.</p>
+<a href="https://github.com/HasibVortex369/riskkit/blob/main/examples/vectorbt_sizing.py"><code>examples/vectorbt_sizing.py</code></a>.</p>
 <h2 id="your-own-loop">Your own loop</h2>
 <p>Nothing about riskkit assumes a framework. The
-<a href="https://github.com/HasibDaddy/riskkit/blob/main/examples/pipeline.py"><code>examples/pipeline.py</code></a>
+<a href="https://github.com/HasibVortex369/riskkit/blob/main/examples/pipeline.py"><code>examples/pipeline.py</code></a>
 walkthrough wires drawdown posture → sizing → validation into a single
 <code>decide_trade()</code> function you can call from any event loop.</p>
 
