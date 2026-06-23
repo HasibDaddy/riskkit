@@ -30,11 +30,10 @@ audit. Drop them into [backtesting.py](https://github.com/kernc/backtesting.py),
 ## Install
 
 ```bash
-pip install "git+https://github.com/HasibDaddy/riskkit.git"
+pip install riskkit-quant
 ```
 
-Zero runtime dependencies. Python 3.9+. *(A PyPI release is on the way — until
-then, install straight from GitHub with the line above.)*
+Zero runtime dependencies. Python 3.9+.
 
 ---
 
@@ -208,7 +207,7 @@ into the popular frameworks:
 - [x] First-class adapters for backtesting.py, freqtrade, and vectorbt
 - [x] A [hosted docs site](https://hasibdaddy.github.io/riskkit/) with component recipes
 - [x] Portfolio caps (total-exposure, heat, per-sector) + standalone sizers (vol-target, risk-parity, Kelly) + VaR/CVaR
-- [ ] A PyPI release (`pip install riskkit-quant`, then `import riskkit`)
+- [x] A PyPI release (`pip install riskkit-quant`, then `import riskkit`)
 
 Feedback on the API is genuinely welcome — open an issue. See the full
 [ROADMAP.md](ROADMAP.md), [CONTRIBUTING.md](CONTRIBUTING.md), and the
