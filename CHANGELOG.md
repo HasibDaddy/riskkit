@@ -6,6 +6,11 @@ All notable changes to this project are documented here. This project adheres to
 ## [Unreleased]
 
 ### Added
+- Standalone, composable **sizers** (pure functions): `kelly_fraction()` (edge-optimal
+  risk fraction, `fraction=0.5` for half-Kelly), `volatility_target_size()` (size a
+  position to a target volatility, notional-capped), and `inverse_vol_weights()` (naive
+  risk-parity weights ∝ 1/σ). `PositionSizer` now delegates its half-Kelly ceiling to
+  `kelly_fraction` (single source of truth).
 - Portfolio-level **heat** cap — `RiskConfig(max_portfolio_heat_pct=...)` limits the
   total capital at risk across open positions (Σ units × distance-to-stop), checked
   by the validator and surfaced via `RiskManager.portfolio_heat_pct()`. Off by

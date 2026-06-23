@@ -33,7 +33,14 @@ from .drawdown import DrawdownManager, DrawdownState
 from .manager import OpenPosition, RiskConfig, RiskDecision, RiskManager, TradeIntent
 from .metrics import conditional_value_at_risk, value_at_risk
 from .session import SessionDecision, SessionManager, TradeRecord
-from .sizing import PositionSizer, SizingInputs, SizingResult
+from .sizing import (
+    PositionSizer,
+    SizingInputs,
+    SizingResult,
+    inverse_vol_weights,
+    kelly_fraction,
+    volatility_target_size,
+)
 from .stops import Side, StopEngine, StopStack
 from .validator import CheckResult, PreTradeValidator, TradeProposal, ValidationResult
 
@@ -50,6 +57,9 @@ __all__ = [
     "PositionSizer",
     "SizingInputs",
     "SizingResult",
+    "kelly_fraction",
+    "volatility_target_size",
+    "inverse_vol_weights",
     # drawdown
     "DrawdownManager",
     "DrawdownState",

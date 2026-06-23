@@ -41,6 +41,17 @@ half-Kelly ceiling, runs a reduction ladder (losing streaks, drawdown tiers,
 daily loss), and enforces a hard notional cap. Returns the units **and** every
 multiplier that fired.
 
+When the stop-distance model isn't what you want, three standalone sizing helpers
+stand on their own (pure functions, no dependencies):
+
+- `kelly_fraction(win_rate, avg_win, avg_loss, fraction=1.0)` — the edge-optimal
+  risk fraction; pass `fraction=0.5` for half-Kelly. Clamps to 0 with no edge.
+- `volatility_target_size(equity, price, return_volatility, target_volatility_pct,
+  max_notional_pct=100)` — units sized so a position's expected volatility hits a
+  target % of equity (calmer instrument → larger position), capped by notional.
+- `inverse_vol_weights({symbol: volatility})` — naive risk-parity weights (∝ 1/σ)
+  that sum to 1.0, so every position contributes equal risk.
+
 ## DrawdownManager
 
 Tracks high-water-mark drawdown and maps it onto tiers: normal → 0.75x → 0.5x →
