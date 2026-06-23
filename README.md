@@ -53,6 +53,16 @@ Every decision is **auditable** — the sizer returns which multipliers fired,
 the stop engine logs each adjustment, and the validator returns a pass/fail line
 for every single check.
 
+Beyond the six components, riskkit ships a few **portfolio-level controls** and
+**standalone sizers** you can reach for on their own:
+
+- **Portfolio caps** (enforced by `RiskManager` as the book fills): total open
+  notional, total **heat** (risk-at-stop), and **per-sector / asset-class**
+  exposure — so no single sector can dominate the book.
+- **Composable sizers** (pure functions): `volatility_target_size`,
+  `inverse_vol_weights` (naive risk parity), and `kelly_fraction`.
+- **Risk metrics**: historical `value_at_risk` and `conditional_value_at_risk`.
+
 ---
 
 ## Quick start
@@ -179,6 +189,8 @@ runnable:
   [`examples/vectorbt_sizing.py`](examples/vectorbt_sizing.py).
 - **your own loop** — [`examples/risk_manager.py`](examples/risk_manager.py)
   drives the full `RiskManager` façade end-to-end;
+  [`examples/multi_asset_book.py`](examples/multi_asset_book.py) allocates,
+  vol-targets, and vets a cross-sector book through the portfolio caps;
   [`examples/pipeline.py`](examples/pipeline.py) shows the same flow wired by hand.
 
 📖 **Full docs: https://hasibdaddy.github.io/riskkit/**
@@ -194,7 +206,9 @@ into the popular frameworks:
 - [x] A single `RiskManager` façade that wires all six together with one config
 - [x] Config presets (conservative / balanced / aggressive) + dict/YAML loading
 - [x] First-class adapters for backtesting.py, freqtrade, and vectorbt
-- [ ] A hosted docs site with end-to-end recipes
+- [x] A [hosted docs site](https://hasibdaddy.github.io/riskkit/) with component recipes
+- [x] Portfolio caps (total-exposure, heat, per-sector) + standalone sizers (vol-target, risk-parity, Kelly) + VaR/CVaR
+- [ ] A PyPI release (`pip install riskkit`)
 
 Feedback on the API is genuinely welcome — open an issue. See the full
 [ROADMAP.md](ROADMAP.md), [CONTRIBUTING.md](CONTRIBUTING.md), and the
