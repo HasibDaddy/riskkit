@@ -37,20 +37,24 @@ here the focus is making them effortless to adopt and deeper where it counts.
   `.aggressive()` (and `RiskConfig.preset(name)`); load from a dict
   (`from_dict`) or a YAML file (`from_yaml`).
 
-## v0.4 — Depth & correctness
+## v0.4 — Depth & correctness ✅ *shipped*
 
-- More sizers: volatility targeting, equal-risk, ATR-based, full/fractional Kelly.
-- More stops: chandelier, parabolic SAR, structure-based.
-- Portfolio-level risk: total open "heat" ✅ *shipped* (`max_portfolio_heat_pct`)
-  and VaR/CVaR ✅ *shipped* (`value_at_risk` / `conditional_value_at_risk`);
-  next — sector / asset-class caps.
-- Property-based tests (hypothesis) for the core invariants ✅ *shipped* —
-  *never increase risk after a loss or deeper drawdown; never exceed configured caps.*
+- More sizers ✅ *shipped* — volatility targeting (`volatility_target_size`),
+  risk parity (`inverse_vol_weights`), and full/fractional Kelly (`kelly_fraction`).
+- More stops ✅ *shipped* — chandelier, parabolic SAR, and structure-based, added
+  to the `StopEngine` stack (all tighten-only).
+- Portfolio-level risk ✅ *shipped* — total open "heat" (`max_portfolio_heat_pct`),
+  per-sector / asset-class caps (`max_exposure_per_sector_pct`), and VaR/CVaR
+  (`value_at_risk` / `conditional_value_at_risk`).
+- Property-based tests (hypothesis) for the core invariants ✅ *shipped* — never
+  increase risk after a loss or deeper drawdown, never exceed a configured cap
+  (notional / heat / sector), and stops only ever tighten.
 
 ## v0.5 — Observability & docs
 
 - A decision / audit-trail object with optional CSV / pandas export.
-- Deployed docs site with recipes and a short "risk 101" guide.
+- Deployed docs site ✅ *live* at https://hasibdaddy.github.io/riskkit/ — recipes
+  and a short "risk 101" guide still to expand.
 - Benchmark notebooks quantifying riskkit's effect (e.g. drawdown reduction) on
   real strategies.
 
