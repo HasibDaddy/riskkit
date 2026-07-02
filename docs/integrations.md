@@ -11,7 +11,7 @@ signals in `next()` as usual, and call `risk_long()` / `risk_short()` instead of
 cooldowns, and drawdown halts are live through the backtest.
 
 ```bash
-pip install "riskkit[backtesting]"
+pip install "riskkit-quant[backtesting]"
 ```
 
 ```python

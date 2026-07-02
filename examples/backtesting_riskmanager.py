@@ -1,6 +1,6 @@
 """Integration example: the full RiskManager façade inside backtesting.py.
 
-Run it:  pip install "riskkit[backtesting]" && python examples/backtesting_riskmanager.py
+Run it:  pip install "riskkit-quant[backtesting]" && python examples/backtesting_riskmanager.py
 
 `backtesting_py_strategy.py` wires `PositionSizer` in by hand. This does the same
 with the *whole* stack via the `RiskkitStrategy` adapter: one `RiskConfig`, and

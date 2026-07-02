@@ -1,6 +1,7 @@
 # riskkit
 
 [![CI](https://github.com/HasibVortex369/riskkit/actions/workflows/ci.yml/badge.svg)](https://github.com/HasibVortex369/riskkit/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/riskkit-quant)](https://pypi.org/project/riskkit-quant/)
 [![Docs](https://img.shields.io/badge/docs-mkdocs-1f6feb)](https://hasibvortex369.github.io/riskkit/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/python-3.9%E2%80%933.12-blue.svg)

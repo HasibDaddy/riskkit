@@ -22,11 +22,14 @@ it numbers; it hands back auditable decisions you can drop into
 ## Install
 
 ```bash
-# Until the PyPI release lands, install from GitHub:
-pip install "git+https://github.com/HasibVortex369/riskkit.git"
+pip install riskkit-quant           # imports as `riskkit`
 # with dynamic correlation (adds pandas):
-pip install "riskkit[pandas] @ git+https://github.com/HasibVortex369/riskkit.git"
+pip install "riskkit-quant[pandas]"
 ```
+
+!!! note
+    The PyPI distribution is named `riskkit-quant` (the bare name was too close
+    to an existing package), but you `import riskkit` as usual.
 
 ## The six components
 
