@@ -188,6 +188,24 @@ def test_zero_distance_stop_skips():
     assert d.sizing.reason_for_zero is not None
 
 
+def test_inverted_stop_is_vetoed_not_sized():
+    # The published 0.4.1 repro: a long with the stop *above* the entry came back
+    # ok=True, sized off abs(entry - stop) with a plausible-looking R:R of 3.00.
+    rm = RiskManager(RiskConfig.balanced())
+    rm.on_equity(10_000, now=T0)
+    d = rm.evaluate(TradeIntent(
+        symbol="ETH/USDT", side="long",
+        entry_price=3000.0, stop_price=3100.0, target_price=3300.0,
+    ), now=T0)
+    assert not d.ok
+    assert any("stop_on_protective_side" in r for r in d.reasons)
+
+    # Mirror case: a short with the stop below the entry.
+    short = rm.evaluate(clean_intent(side="short", stop_price=97.0, target_price=96.0), now=T0)
+    assert not short.ok
+    assert any("stop_on_protective_side" in r for r in short.reasons)
+
+
 # --------------------------------------------------------------- correlation/book
 
 

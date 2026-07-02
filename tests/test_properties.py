@@ -12,7 +12,10 @@ of randomized inputs, not a handful of hand-picked cases:
      notional cap and shrinks as volatility rises; inverse-vol weights sum to 1
      and reward lower vol; Kelly stays in ``[0, fraction]`` and grows with edge;
   5. a stop only ever moves *closer* to price — the active stop never loosens,
-     across every stop type in the stack.
+     across every stop type in the stack;
+  6. a stop that is not on the protective side of the entry (long: at or above,
+     short: at or below) is always vetoed, and correctly-oriented geometry never
+     trips the side checks.
 
 Skipped automatically when hypothesis isn't installed (it's in the `dev` extra).
 """
@@ -24,12 +27,14 @@ from hypothesis import strategies as st
 
 from riskkit import (
     PositionSizer,
+    PreTradeValidator,
     RiskConfig,
     RiskManager,
     SizingInputs,
     StopEngine,
     StopStack,
     TradeIntent,
+    TradeProposal,
     inverse_vol_weights,
     kelly_fraction,
     volatility_target_size,
@@ -205,3 +210,45 @@ def test_active_stop_never_loosens(side, moves):
         prev = active
         if reason is not None:
             break
+
+
+# ------------------------------------------------- v0.4.2: stop/target geometry
+
+# 0.0 included on purpose: a stop *at* the entry must also be vetoed.
+wrong_side_offsets = st.floats(min_value=0.0, max_value=1e4,
+                               allow_nan=False, allow_infinity=False)
+
+
+@given(side=st.sampled_from(["long", "short"]), entry=prices, offset=wrong_side_offsets)
+@settings(max_examples=300)
+def test_stop_on_wrong_side_always_vetoed(side, entry, offset):
+    """A long requires stop < entry and a short stop > entry — at-or-past the
+    entry the whole pipeline must say no, whatever the other gates think."""
+    risk = RiskManager()
+    risk.on_equity(1_000_000.0)
+    stop = entry + offset if side == "long" else entry - offset
+    target = entry * 2 if side == "long" else entry / 2   # profit side: isolates the stop check
+    d = risk.evaluate(TradeIntent(
+        symbol="X", side=side, entry_price=entry, stop_price=stop, target_price=target,
+    ))
+    assert not d.ok
+    assert any(r.startswith("stop_on_protective_side") for r in d.reasons)
+
+
+@given(side=st.sampled_from(["long", "short"]), entry=prices,
+       stop_dist=distances, target_dist=distances)
+@settings(max_examples=300)
+def test_correct_geometry_never_trips_side_checks(side, entry, stop_dist, target_dist):
+    """A protective stop plus a profit-side target never trigger the geometry
+    checks — the new gates cannot false-positive on well-formed trades."""
+    sign = 1 if side == "long" else -1
+    p = TradeProposal(
+        symbol="X", side=side,
+        entry_price=entry,
+        stop_price=entry - sign * stop_dist,
+        target_price=entry + sign * target_dist,
+        size_units=1.0, notional=entry, strategy="s", score=100, equity=1e6,
+    )
+    failed = {f.name for f in PreTradeValidator().validate(p).failures}
+    assert "stop_on_protective_side" not in failed
+    assert "target_on_profit_side" not in failed

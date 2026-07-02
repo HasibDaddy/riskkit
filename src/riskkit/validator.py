@@ -170,6 +170,20 @@ class PreTradeValidator:
         # ── SIGNAL QUALITY ──
         results.append(CheckResult("score_ok", p.score >= min_score,
                                    f"score={p.score} >= {min_score}"))
+        # Order geometry: the stop must sit on the protective side of the entry
+        # (long: below, short: above — a stop at the entry protects nothing) and
+        # the target on the profit side. The R:R check below uses absolute
+        # distances, so it cannot see an inverted order on its own.
+        if p.side in ("long", "short"):
+            is_long = p.side == "long"
+            results.append(CheckResult(
+                "stop_on_protective_side",
+                p.stop_price < p.entry_price if is_long else p.stop_price > p.entry_price,
+                f"{p.side}: entry={p.entry_price} stop={p.stop_price}"))
+            results.append(CheckResult(
+                "target_on_profit_side",
+                p.target_price >= p.entry_price if is_long else p.target_price <= p.entry_price,
+                f"{p.side}: entry={p.entry_price} target={p.target_price}"))
         risk = abs(p.entry_price - p.stop_price)
         reward = abs(p.target_price - p.entry_price)
         rr = reward / risk if risk else 0.0

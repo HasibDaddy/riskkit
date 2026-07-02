@@ -3,7 +3,25 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.4.2] - 2026-07-02
+
+### Fixed
+- **Inverted stops (and targets) are now rejected.** Two new validator checks —
+  `stop_on_protective_side` fails any long whose stop sits at or above the entry
+  (short: at or below), and `target_on_profit_side` fails a target on the losing
+  side of the entry. Previously an inverted stop was silently sized via
+  `abs(entry − stop)` and approved: on 0.4.1, `RiskManager.evaluate()` on a long
+  with `stop_price > entry_price` returned `ok=True` with a plausible-looking
+  R:R. Both checks run in `PreTradeValidator.validate()` and therefore in every
+  `RiskManager.evaluate()` call; sizing and validation of correctly-oriented
+  trades are unchanged. Sides other than `"long"`/`"short"` (out of contract)
+  skip the geometry checks rather than guess a direction.
+
+## [0.4.1] - 2026-06-26
+
+Re-publish of 0.4.0 under a new version number (the original PyPI upload was
+deleted during the GitHub username migration and PyPI permanently blocks
+re-using a released filename). No code changes.
 
 ## [0.4.0] - 2026-06-23
 

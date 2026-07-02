@@ -60,6 +60,56 @@ def test_halt_flags_block():
     assert not v.validate(clean_proposal(correlation_blocked=True)).passed
 
 
+def test_inverted_stop_fails_protective_side_check():
+    v = PreTradeValidator()
+    # Long with the stop *above* the entry: sized happily via abs() before,
+    # must now be vetoed — and not as a retryable market-quality failure.
+    r = v.validate(clean_proposal(stop_price=103.0))
+    assert not r.passed
+    assert any(f.name == "stop_on_protective_side" for f in r.failures)
+    assert not r.market_quality_failed
+
+    # Short with the stop *below* the entry.
+    r = v.validate(clean_proposal(side="short", stop_price=98.0, target_price=96.0))
+    assert not r.passed
+    assert any(f.name == "stop_on_protective_side" for f in r.failures)
+
+
+def test_stop_at_entry_fails_protective_side_check():
+    # A stop at the entry protects nothing, either direction.
+    v = PreTradeValidator()
+    for side in ("long", "short"):
+        target = 104.0 if side == "long" else 96.0
+        r = v.validate(clean_proposal(side=side, stop_price=100.0, target_price=target))
+        assert any(f.name == "stop_on_protective_side" for f in r.failures)
+
+
+def test_short_with_protective_geometry_passes():
+    v = PreTradeValidator()
+    r = v.validate(clean_proposal(side="short", stop_price=102.0, target_price=96.0))
+    assert r.passed
+    assert r.failures == []
+
+
+def test_inverted_target_fails_profit_side_check():
+    v = PreTradeValidator()
+    # Long with the target below the entry (stop stays protective).
+    r = v.validate(clean_proposal(target_price=97.0))
+    assert not r.passed
+    assert any(f.name == "target_on_profit_side" for f in r.failures)
+    # Short with the target above the entry.
+    r = v.validate(clean_proposal(side="short", stop_price=102.0, target_price=103.0))
+    assert any(f.name == "target_on_profit_side" for f in r.failures)
+
+
+def test_geometry_checks_require_known_side():
+    # An out-of-contract side string skips the geometry checks rather than guess
+    # which direction it means.
+    r = PreTradeValidator().validate(clean_proposal(side="buy", stop_price=103.0))
+    assert not any(c.name == "stop_on_protective_side" for c in r.details)
+    assert not any(c.name == "target_on_profit_side" for c in r.details)
+
+
 def test_portfolio_heat_check_only_when_configured():
     # Off by default: the check is not even present.
     assert not any(c.name == "portfolio_heat_ok"

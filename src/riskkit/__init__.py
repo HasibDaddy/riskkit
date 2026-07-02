@@ -44,7 +44,7 @@ from .sizing import (
 from .stops import Side, StopEngine, StopStack
 from .validator import CheckResult, PreTradeValidator, TradeProposal, ValidationResult
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 
 __all__ = [
     # façade
