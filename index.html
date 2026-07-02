@@ -513,11 +513,15 @@ it numbers; it hands back auditable decisions you can drop into
 losing strategy profitable. Test everything on paper first.</p>
 </div>
 <h2 id="install">Install</h2>
-<div class="highlight"><pre><span></span><code><span class="c1"># Until the PyPI release lands, install from GitHub:</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;git+https://github.com/HasibVortex369/riskkit.git&quot;</span>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>riskkit-quant<span class="w">           </span><span class="c1"># imports as `riskkit`</span>
 <span class="c1"># with dynamic correlation (adds pandas):</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;riskkit[pandas] @ git+https://github.com/HasibVortex369/riskkit.git&quot;</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;riskkit-quant[pandas]&quot;</span>
 </code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The PyPI distribution is named <code>riskkit-quant</code> (the bare name was too close
+to an existing package), but you <code>import riskkit</code> as usual.</p>
+</div>
 <h2 id="the-six-components">The six components</h2>
 <table>
 <thead>

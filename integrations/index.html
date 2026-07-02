@@ -546,7 +546,7 @@ signals in <code>next()</code> as usual, and call <code>risk_long()</code> / <co
 <code>self.buy</code> / <code>self.sell</code>. Every entry is then sized <strong>and</strong> validated by your one
 <code>RiskConfig</code> — and closed trades are fed back to the session manager, so streaks,
 cooldowns, and drawdown halts are live through the backtest.</p>
-<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;riskkit[backtesting]&quot;</span>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;riskkit-quant[backtesting]&quot;</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">riskkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">RiskConfig</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">riskkit.adapters.backtesting</span><span class="w"> </span><span class="kn">import</span> <span class="n">RiskkitStrategy</span>
